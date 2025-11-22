@@ -54,7 +54,7 @@
             opacity: 0.6;
         }
 
-        /* 动态岛（Dynamic Island） */
+        /* 动态岛（Dynamic Island）- 已隐藏 */
         .iphone-16-pro-frame::after {
             content: '';
             position: absolute;
@@ -69,6 +69,7 @@
             box-shadow: 
                 inset 0 2px 4px rgba(0, 0, 0, 0.5),
                 0 2px 8px rgba(0, 0, 0, 0.3);
+            display: none; /* 隐藏摄像头/灵动岛 */
         }
 
         /* 屏幕区域 */
@@ -93,7 +94,7 @@
             background: #000;
             border-radius: 19px;
             z-index: 1000;
-            display: flex;
+            display: none; /* 隐藏灵动岛 */
             align-items: center;
             justify-content: center;
             box-shadow: 
@@ -102,7 +103,7 @@
             overflow: hidden;
         }
 
-        /* 动态岛内部指示器 - 前置摄像头 */
+        /* 动态岛内部指示器 - 前置摄像头 - 已隐藏 */
         .dynamic-island::before {
             content: '';
             width: 6px;
@@ -112,9 +113,10 @@
             box-shadow: 
                 0 0 4px rgba(255, 255, 255, 0.3),
                 inset 0 0 2px rgba(0, 0, 0, 0.5);
+            display: none; /* 隐藏前置摄像头指示器 */
         }
 
-        /* 动态岛内部指示器 - 传感器 */
+        /* 动态岛内部指示器 - 传感器 - 已隐藏 */
         .dynamic-island::after {
             content: '';
             position: absolute;
@@ -123,6 +125,7 @@
             height: 2px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
+            display: none; /* 隐藏传感器指示器 */
         }
 
         /* iframe 容器 */
