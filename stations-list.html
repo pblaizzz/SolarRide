@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearby Stations - SolarRide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="custom.css">
+</head>
+<body class="bg-gradient-to-b from-green-50 to-emerald-50">
+    <!-- Top Navigation -->
+    <div class="bg-white/95 backdrop-blur-md safe-area-top border-b border-gray-100/50 shadow-sm">
+        <div class="flex items-center justify-between px-4 py-3.5">
+            <button class="w-10 h-10 flex items-center justify-center" onclick="window.parent.postMessage({type: 'navigate', page: 'home'}, '*')">
+                <i class="fas fa-arrow-left text-gray-700"></i>
+            </button>
+            <h1 class="text-lg font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Nearby Stations</h1>
+            <div class="w-10"></div>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="pb-6 custom-scrollbar overflow-y-auto" style="height: calc(100vh - 60px);">
+        <!-- Station List -->
+        <div class="px-4 mt-4 space-y-4">
+            <!-- Station 1: Champs-Élysées -->
+            <div class="bg-white rounded-3xl overflow-hidden card-shadow-lg">
+                <div class="h-48 image-placeholder relative">
+                    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400" alt="Champs-Élysées Station" class="w-full h-full object-cover">
+                    <div class="absolute top-4 right-4">
+                        <span class="px-3 py-1.5 gradient-bg-green text-green-700 rounded-full text-xs font-bold">8 Available</span>
+                    </div>
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Champs-Élysées Station</h3>
+                        <div class="flex items-center gap-1">
+                            <i class="fas fa-star text-yellow-500 text-sm"></i>
+                            <span class="text-sm font-semibold">4.8</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                        <i class="fas fa-map-marker-alt text-green-600"></i>
+                        <span>101 Avenue des Champs-Élysées, 75008 Paris</span>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
+                        <span><i class="fas fa-walking"></i> 5 min walk</span>
+                        <span><i class="fas fa-euro-sign"></i> €2/hour</span>
+                        <span><i class="fas fa-solar-panel text-yellow-500"></i> 85% Solar</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="flex-1 border-2 border-green-600 text-green-600 py-2.5 rounded-2xl font-bold text-sm">
+                            <i class="fas fa-directions mr-1"></i>Navigate
+                        </button>
+                        <button class="flex-1 gradient-bg text-white py-2.5 rounded-2xl font-bold text-sm card-shadow" onclick="window.parent.postMessage({type: 'navigate', page: 'station-detail'}, '*')">
+                            <i class="fas fa-info-circle mr-1"></i>Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Station 2: Eiffel Tower -->
+            <div class="bg-white rounded-3xl overflow-hidden card-shadow-lg">
+                <div class="h-48 image-placeholder relative">
+                    <img src="https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=400" alt="Eiffel Tower Station" class="w-full h-full object-cover">
+                    <div class="absolute top-4 right-4">
+                        <span class="px-3 py-1.5 gradient-bg-yellow text-yellow-700 rounded-full text-xs font-bold">2 Available</span>
+                    </div>
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Eiffel Tower Station</h3>
+                        <div class="flex items-center gap-1">
+                            <i class="fas fa-star text-yellow-500 text-sm"></i>
+                            <span class="text-sm font-semibold">4.6</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                        <i class="fas fa-map-marker-alt text-green-600"></i>
+                        <span>Champ de Mars, 5 Avenue Anatole France, 75007 Paris</span>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
+                        <span><i class="fas fa-walking"></i> 12 min walk</span>
+                        <span><i class="fas fa-euro-sign"></i> €2.5/hour</span>
+                        <span><i class="fas fa-solar-panel text-yellow-500"></i> 72% Solar</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="flex-1 border-2 border-green-600 text-green-600 py-2.5 rounded-2xl font-bold text-sm">
+                            <i class="fas fa-directions mr-1"></i>Navigate
+                        </button>
+                        <button class="flex-1 gradient-bg text-white py-2.5 rounded-2xl font-bold text-sm card-shadow" onclick="window.parent.postMessage({type: 'navigate', page: 'station-detail'}, '*')">
+                            <i class="fas fa-info-circle mr-1"></i>Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Station 3: Montmartre -->
+            <div class="bg-white rounded-3xl overflow-hidden card-shadow-lg">
+                <div class="h-48 image-placeholder relative">
+                    <img src="https://images.unsplash.com/photo-1501339847302-ac426a4c7c6f?w=400" alt="Montmartre Station" class="w-full h-full object-cover">
+                    <div class="absolute top-4 right-4">
+                        <span class="px-3 py-1.5 gradient-bg-green text-green-700 rounded-full text-xs font-bold">12 Available</span>
+                    </div>
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Montmartre Station</h3>
+                        <div class="flex items-center gap-1">
+                            <i class="fas fa-star text-yellow-500 text-sm"></i>
+                            <span class="text-sm font-semibold">4.9</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                        <i class="fas fa-map-marker-alt text-green-600"></i>
+                        <span>35 Rue du Chevalier de la Barre, 75018 Paris</span>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
+                        <span><i class="fas fa-walking"></i> 8 min walk</span>
+                        <span><i class="fas fa-euro-sign"></i> €1.8/hour</span>
+                        <span><i class="fas fa-solar-panel text-yellow-500"></i> 90% Solar</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="flex-1 border-2 border-green-600 text-green-600 py-2.5 rounded-2xl font-bold text-sm">
+                            <i class="fas fa-directions mr-1"></i>Navigate
+                        </button>
+                        <button class="flex-1 gradient-bg text-white py-2.5 rounded-2xl font-bold text-sm card-shadow" onclick="window.parent.postMessage({type: 'navigate', page: 'station-detail'}, '*')">
+                            <i class="fas fa-info-circle mr-1"></i>Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Detect if in iframe, hide bottom navigation if so
+        if (window.self !== window.top) {
+            // Navigation is handled by parent frame
+        }
+    </script>
+</body>
+</html>
+

@@ -20,8 +20,8 @@
             </button>
         </div>
         <div class="flex items-center gap-4 px-4 pb-3">
-            <button class="px-4 py-2 primary-green font-bold border-b-2 border-green-600">Recommended</button>
-            <button class="px-4 py-2 text-gray-500">My Activities</button>
+            <button class="px-4 py-2 primary-green font-bold border-b-2 border-green-600" id="recommendedTab">Recommended</button>
+            <button class="px-4 py-2 text-gray-500" id="myActivitiesTab" onclick="window.parent.postMessage({type: 'navigate', page: 'my-activities'}, '*')">My Activities</button>
         </div>
     </div>
 
@@ -52,7 +52,16 @@
                             </div>
                             <span class="text-sm text-gray-600">8/15 joined</span>
                         </div>
-                        <button class="gradient-bg text-white px-5 py-2.5 rounded-2xl text-sm font-bold card-shadow">
+                        <button class="gradient-bg text-white px-5 py-2.5 rounded-2xl text-sm font-bold card-shadow join-btn" 
+                                data-title="Weekend Riverside Ride"
+                                data-image="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800"
+                                data-tags='["Group Ride", "Eco Commute"]'
+                                data-date="Sat 9:00 AM"
+                                data-distance="15 km"
+                                data-joined="8"
+                                data-total="15"
+                                onclick="joinActivity(this)"
+                                type="button">
                             Join
                         </button>
                     </div>
@@ -81,7 +90,16 @@
                             </div>
                             <span class="text-sm text-gray-600">2/5 joined</span>
                         </div>
-                        <button class="gradient-bg text-white px-4 py-2 rounded-xl text-sm font-bold">
+                        <button class="gradient-bg text-white px-4 py-2 rounded-xl text-sm font-bold join-btn"
+                                data-title="Montmartre Station + Coffee"
+                                data-image="https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800"
+                                data-tags='["Charge Together", "Coffee Time"]'
+                                data-date="Today 2:00 PM"
+                                data-location="Montmartre Station"
+                                data-joined="2"
+                                data-total="5"
+                                onclick="joinActivity(this)"
+                                type="button">
                             Join
                         </button>
                     </div>
@@ -112,7 +130,16 @@
                             </div>
                             <span class="text-sm text-gray-600">12/20 joined</span>
                         </div>
-                        <button class="gradient-bg text-white px-4 py-2 rounded-xl text-sm font-bold">
+                        <button class="gradient-bg text-white px-4 py-2 rounded-xl text-sm font-bold join-btn"
+                                data-title="Urban Night Exploration"
+                                data-image="https://images.unsplash.com/photo-1501339847302-ac426a4c7c6f?w=800"
+                                data-tags='["Group Ride", "Night Ride"]'
+                                data-date="Fri 7:00 PM"
+                                data-distance="20 km"
+                                data-joined="12"
+                                data-total="20"
+                                onclick="joinActivity(this)"
+                                type="button">
                             Join
                         </button>
                     </div>
@@ -146,7 +173,197 @@
         </div>
     </div>
 
+    <!-- Custom Modal for Join Confirmation -->
+    <div id="joinModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center px-4" onclick="if(event.target === this) closeJoinModal()">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full card-shadow-lg transform transition-all duration-300 scale-95 opacity-0" id="joinModalContent" onclick="event.stopPropagation()">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 mx-auto mb-4 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="fas fa-check text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Join Activity?</h3>
+                <p class="text-sm text-gray-600" id="joinModalTitle">Are you sure you want to join this activity?</p>
+            </div>
+            <div class="flex gap-3">
+                <button class="flex-1 border-2 border-gray-300 text-gray-700 py-3 rounded-2xl font-bold text-sm hover:bg-gray-50 transition-colors" onclick="closeJoinModal()">
+                    Cancel
+                </button>
+                <button class="flex-1 gradient-bg text-white py-3 rounded-2xl font-bold text-sm card-shadow" id="confirmJoinBtn">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Success Toast -->
+    <div id="successToast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-white rounded-2xl px-6 py-4 card-shadow-lg z-50 hidden items-center gap-3 max-w-sm w-full mx-4">
+        <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-check text-white"></i>
+        </div>
+        <div class="flex-1">
+            <div class="font-bold text-sm text-gray-800">Success!</div>
+            <div class="text-xs text-gray-600" id="successToastMessage">Activity joined successfully</div>
+        </div>
+        <button onclick="closeSuccessToast()" class="text-gray-400 hover:text-gray-600">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
     <script>
+        // Store current button for join confirmation
+        let currentJoinButton = null;
+
+        // Show join confirmation modal
+        function joinActivity(button) {
+            const title = button.getAttribute('data-title');
+            
+            // Get existing activities
+            const activities = JSON.parse(localStorage.getItem('myActivities') || '[]');
+            
+            // Check if already joined
+            if (activities.some(act => act.title === title)) {
+                showSuccessToast('You have already joined this activity!', false);
+                return;
+            }
+
+            // Store button reference
+            currentJoinButton = button;
+            
+            // Update modal content
+            document.getElementById('joinModalTitle').textContent = `Join "${title}"?`;
+            
+            // Show modal
+            const modal = document.getElementById('joinModal');
+            const modalContent = document.getElementById('joinModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        // Confirm join
+        function confirmJoin() {
+            if (!currentJoinButton) return;
+
+            const title = currentJoinButton.getAttribute('data-title');
+            const image = currentJoinButton.getAttribute('data-image');
+            const tags = JSON.parse(currentJoinButton.getAttribute('data-tags'));
+            const date = currentJoinButton.getAttribute('data-date');
+            const distance = currentJoinButton.getAttribute('data-distance');
+            const location = currentJoinButton.getAttribute('data-location');
+            const joined = parseInt(currentJoinButton.getAttribute('data-joined'));
+            const total = parseInt(currentJoinButton.getAttribute('data-total'));
+
+            // Create activity object
+            const activity = {
+                title: title,
+                image: image,
+                tags: tags,
+                date: date || '',
+                distance: distance || '',
+                location: location || '',
+                joined: joined + 1,
+                total: total
+            };
+
+            // Get existing activities
+            const activities = JSON.parse(localStorage.getItem('myActivities') || '[]');
+            activities.push(activity);
+            localStorage.setItem('myActivities', JSON.stringify(activities));
+
+            // Update button
+            currentJoinButton.textContent = 'Joined';
+            currentJoinButton.classList.remove('gradient-bg', 'text-white');
+            currentJoinButton.classList.add('bg-gray-200', 'text-gray-600', 'cursor-not-allowed');
+            currentJoinButton.disabled = true;
+
+            // Close modal and show success
+            closeJoinModal();
+            showSuccessToast(`Successfully joined "${title}"!`, true);
+            
+            currentJoinButton = null;
+        }
+
+        // Close join modal
+        function closeJoinModal() {
+            const modal = document.getElementById('joinModal');
+            const modalContent = document.getElementById('joinModalContent');
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+            currentJoinButton = null;
+        }
+
+        // Show success toast
+        function showSuccessToast(message, isSuccess = true) {
+            const toast = document.getElementById('successToast');
+            const toastMessage = document.getElementById('successToastMessage');
+            const iconContainer = toast.querySelector('.gradient-bg');
+            const icon = toast.querySelector('.fa-check, .fa-exclamation');
+            
+            toastMessage.textContent = message;
+            
+            if (!isSuccess) {
+                iconContainer.classList.remove('gradient-bg');
+                iconContainer.classList.add('bg-yellow-500');
+                if (icon) {
+                    icon.classList.remove('fa-check');
+                    icon.classList.add('fa-exclamation');
+                }
+            } else {
+                iconContainer.classList.remove('bg-yellow-500');
+                iconContainer.classList.add('gradient-bg');
+                if (icon) {
+                    icon.classList.remove('fa-exclamation');
+                    icon.classList.add('fa-check');
+                }
+            }
+            
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            
+            // Auto close after 3 seconds
+            setTimeout(() => {
+                closeSuccessToast();
+            }, 3000);
+        }
+
+        // Close success toast
+        function closeSuccessToast() {
+            const toast = document.getElementById('successToast');
+            toast.classList.add('hidden');
+            toast.classList.remove('flex');
+        }
+
+        // Bind confirm button
+        document.addEventListener('DOMContentLoaded', function() {
+            const confirmBtn = document.getElementById('confirmJoinBtn');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', confirmJoin);
+            }
+        });
+
+        // Check and update button states on page load
+        function updateJoinButtons() {
+            const activities = JSON.parse(localStorage.getItem('myActivities') || '[]');
+            const joinButtons = document.querySelectorAll('.join-btn');
+            
+            joinButtons.forEach(button => {
+                const title = button.getAttribute('data-title');
+                if (activities.some(act => act.title === title)) {
+                    button.textContent = 'Joined';
+                    button.classList.remove('gradient-bg', 'text-white');
+                    button.classList.add('bg-gray-200', 'text-gray-600', 'cursor-not-allowed');
+                    button.disabled = true;
+                }
+            });
+        }
+
+        // Initialize on page load
+        updateJoinButtons();
+
         // Detect if in iframe, hide bottom navigation if so
         if (window.self !== window.top) {
             const bottomNav = document.getElementById('subBottomNav');

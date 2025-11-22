@@ -15,10 +15,10 @@
             <div class="flex items-center gap-2">
                 <span class="text-lg font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">SolarRide</span>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center">
                 <div class="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 rounded-full">
                     <i class="fas fa-sun text-yellow-500 text-xs"></i>
-                    <span class="text-xs font-medium text-gray-700">Ensoleillé 25°C</span>
+                    <span class="text-xs font-medium text-gray-700">25°C</span>
                 </div>
                 <div class="relative">
                     <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
@@ -91,7 +91,7 @@
         <div class="mt-6 relative z-10">
             <div class="flex items-center justify-between px-4 mb-3">
                 <h2 class="text-lg font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Nearby Stations</h2>
-                <span class="text-sm primary-green">View All <i class="fas fa-chevron-right text-xs"></i></span>
+                <span class="text-sm primary-green cursor-pointer" onclick="window.parent.postMessage({type: 'navigate', page: 'stations-list'}, '*')">View All <i class="fas fa-chevron-right text-xs"></i></span>
             </div>
             <div class="flex gap-4 px-4 overflow-x-auto pb-2">
                 <div class="flex-shrink-0 w-72 bg-white rounded-3xl overflow-hidden card-shadow-lg">
