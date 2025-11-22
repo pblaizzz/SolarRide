@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>SolarRide - Solar Bike Charging</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="custom.css">
+    <!-- QR Code Generator Library - qrcodejs -->
+    <script src="https://unpkg.com/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
         /* 主框架样式 - iPhone 16 Pro 模拟 */
         body {
@@ -174,8 +176,8 @@
             z-index: 1002;
         }
 
-        /* 响应式设计 - 小屏幕适配 */
-        @media (max-width: 480px) {
+        /* 响应式设计 - 移动端适配 */
+        @media (max-width: 480px), (max-height: 900px) {
             body {
                 background: #000;
             }
@@ -183,6 +185,7 @@
             .iphone-16-pro-frame {
                 width: 100vw;
                 height: 100vh;
+                height: 100dvh; /* 动态视口高度，适配移动浏览器地址栏 */
                 border-radius: 0;
                 margin: 0;
                 padding: 0;
@@ -202,8 +205,20 @@
             }
 
             .dynamic-island {
-                top: 8px;
+                top: max(8px, env(safe-area-inset-top));
             }
+        }
+        
+        /* 触摸优化 */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        /* 防止文本选择（移动端体验优化） */
+        button, .nav-item, .nav-center-btn {
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         /* 确保 iframe 内容可以滚动 */
@@ -354,6 +369,32 @@
         </div>
     </div>
 
+    <!-- QR Code Modal -->
+    <div id="qrCodeModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center px-4" onclick="if(event.target === this) closeQRCodeModal()">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full card-shadow-lg transform transition-all duration-300 scale-95 opacity-0" id="qrCodeModalContent" onclick="event.stopPropagation()">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 mx-auto mb-4 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="fas fa-qrcode text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Scan QR Code</h3>
+                <p class="text-sm text-gray-600 mb-4">Scan this QR code to unlock the charging station</p>
+                
+                <!-- QR Code Container -->
+                <div class="bg-white p-4 rounded-2xl border-2 border-gray-100 inline-block mb-4">
+                    <div id="qrcode" class="flex items-center justify-center min-w-[200px] min-h-[200px]"></div>
+                </div>
+                
+                <div class="text-xs text-gray-500">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Point your camera at the QR code
+                </div>
+            </div>
+            <button class="w-full gradient-bg text-white py-3 rounded-2xl font-bold text-sm card-shadow hover:opacity-90 transition-opacity" onclick="closeQRCodeModal()">
+                Close
+            </button>
+        </div>
+    </div>
+
     <script>
         // 页面路由配置
         const pageRoutes = {
@@ -406,19 +447,37 @@
                 updateNavigation(pageName);
             }
 
-            // 移除加载状态（iframe 加载完成后）
+            // 设置超时保护（先设置，防止页面加载失败）
+            let timeoutId = setTimeout(function() {
+                if (mainFrame.classList.contains('loading')) {
+                    console.warn('Page loading timeout after 2s, removing loading state for:', pageUrl);
+                    mainFrame.classList.remove('loading');
+                }
+            }, 2000);
+
+            // 设置加载完成处理
             mainFrame.onload = function() {
-                mainFrame.classList.remove('loading');
+                console.log('iframe onload fired for:', pageUrl);
+                clearTimeout(timeoutId);
+                
+                // 使用 setTimeout 确保页面完全渲染后再移除loading状态
+                setTimeout(function() {
+                    if (mainFrame.classList.contains('loading')) {
+                        mainFrame.classList.remove('loading');
+                        console.log('Loading state removed for:', pageUrl);
+                    }
+                }, 150);
+                
                 // 隐藏子页面的底部导航栏
                 try {
                     const iframeDoc = mainFrame.contentDocument || mainFrame.contentWindow.document;
-                    const subNavs = iframeDoc.querySelectorAll('.bottom-nav');
+                    const subNavs = iframeDoc.querySelectorAll('.bottom-nav, #subBottomNav');
                     subNavs.forEach(nav => {
                         nav.style.display = 'none';
                     });
                 } catch (e) {
                     // Cross-origin restrictions, cannot access iframe content
-                    console.log('Cannot access iframe content (possibly due to cross-origin restrictions)');
+                    console.log('Cannot access iframe content');
                 }
             };
         }
@@ -446,11 +505,72 @@
             });
         });
 
-        // Scan button click event
+        // Scan button click event - Show QR Code Modal
         scanBtn.addEventListener('click', function() {
-            // QR code scanning functionality can be added here
-            alert('QR Code scanning feature coming soon...');
+            showQRCodeModal();
         });
+
+        // Show QR Code Modal
+        function showQRCodeModal() {
+            const modal = document.getElementById('qrCodeModal');
+            const modalContent = document.getElementById('qrCodeModalContent');
+            const qrcodeContainer = document.getElementById('qrcode');
+            
+            // 清除之前的二维码
+            qrcodeContainer.innerHTML = '';
+            
+            // 生成虚拟的二维码数据（可以是用户ID、充电站ID等）
+            const qrData = `SOLARRIDE://charge/${Date.now()}`;
+            
+            // 使用QRCode库生成二维码
+            try {
+                if (typeof QRCode !== 'undefined') {
+                    // 使用qrcodejs2库
+                    new QRCode(qrcodeContainer, {
+                        text: qrData,
+                        width: 200,
+                        height: 200,
+                        colorDark: '#000000',
+                        colorLight: '#ffffff',
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                } else {
+                    throw new Error('QRCode library not loaded');
+                }
+            } catch (error) {
+                console.error('QR Code generation error:', error);
+                // 如果生成失败，显示占位符
+                qrcodeContainer.innerHTML = `
+                    <div class="w-48 h-48 bg-gray-200 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                        <div class="text-center text-gray-500">
+                            <i class="fas fa-qrcode text-4xl mb-2"></i>
+                            <div class="text-xs font-medium">QR Code</div>
+                            <div class="text-[10px] mt-1">示例二维码</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 显示模态框
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        // Close QR Code Modal
+        function closeQRCodeModal() {
+            const modal = document.getElementById('qrCodeModal');
+            const modalContent = document.getElementById('qrCodeModalContent');
+            
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
 
         // 监听 iframe 内的页面跳转（通过 postMessage）
         window.addEventListener('message', function(event) {
@@ -459,7 +579,20 @@
 
             if (event.data && event.data.type === 'navigate') {
                 const targetPage = event.data.page;
+                const location = event.data.location; // 位置信息
+                
+                // 如果目标页面是map且有位置信息，保存位置信息以便传递给map页面
+                if (targetPage === 'map' && location) {
+                    // 将位置信息存储到sessionStorage，map页面可以从那里读取
+                    sessionStorage.setItem('navigateLocation', JSON.stringify(location));
+                }
+                
                 switchPage(targetPage, event.data.updateNav !== false);
+            } else if (event.data && event.data.type === 'pageLoaded') {
+                // 子页面通知已完全加载
+                if (mainFrame.classList.contains('loading')) {
+                    mainFrame.classList.remove('loading');
+                }
             }
         });
 

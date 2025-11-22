@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Station Details - SolarRide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,7 +25,7 @@
     <!-- 图片轮播 -->
     <div class="relative mt-14">
         <div class="h-64 overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800" alt="Charging Station" class="w-full h-full object-cover">
+            <img src="images/rider-1.png" alt="Gare de Nantes Station" class="w-full h-full object-cover">
         </div>
         <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
             <div class="w-2 h-2 bg-white rounded-full"></div>
@@ -39,7 +39,7 @@
         <!-- 标题区 -->
         <div class="px-4 pt-4">
             <div class="flex items-center justify-between mb-2">
-                <h2 class="text-2xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Champs-Élysées Station</h2>
+                <h2 class="text-2xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Gare de Nantes Station</h2>
                 <div class="flex items-center gap-1">
                     <i class="fas fa-star text-yellow-500"></i>
                     <span class="font-bold">4.8</span>
@@ -47,7 +47,7 @@
             </div>
             <div class="flex items-center gap-2 text-sm text-gray-600 mb-4">
                 <i class="fas fa-map-marker-alt text-green-600"></i>
-                <span>101 Avenue des Champs-Élysées, 75008 Paris</span>
+                <span>27 Boulevard de Stalingrad, 44000 Nantes</span>
                 <span class="primary-green">· 500 m away</span>
             </div>
         </div>
@@ -147,7 +147,7 @@
     <!-- 底部操作栏 -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-area-bottom z-40">
         <div class="flex items-center gap-3 px-4 py-3">
-            <button class="flex-1 border-2 border-green-600 text-green-600 py-3 rounded-3xl font-bold" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
+            <button id="navigateBtn" class="flex-1 border-2 border-green-600 text-green-600 py-3 rounded-3xl font-bold" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
                 <i class="fas fa-directions mr-2"></i>Navigate
             </button>
             <button class="flex-1 gradient-bg text-white py-3 rounded-3xl font-bold card-shadow" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);">
@@ -179,6 +179,38 @@
     </div>
 
     <script>
+        // 站点信息（Gare de Nantes Station）
+        const stationInfo = {
+            name: 'Gare de Nantes Station',
+            position: { lat: 47.2173, lng: -1.5424 },
+            address: '27 Boulevard de Stalingrad, 44000 Nantes'
+        };
+
+        // Navigate按钮点击事件
+        document.addEventListener('DOMContentLoaded', () => {
+            const navigateBtn = document.getElementById('navigateBtn');
+            if (navigateBtn) {
+                navigateBtn.addEventListener('click', () => {
+                    // 发送导航消息到父页面，包含位置信息
+                    if (window.parent && window.parent !== window) {
+                        window.parent.postMessage({
+                            type: 'navigate',
+                            page: 'map',
+                            location: {
+                                lat: stationInfo.position.lat,
+                                lng: stationInfo.position.lng,
+                                name: stationInfo.name,
+                                address: stationInfo.address
+                            }
+                        }, '*');
+                    } else {
+                        // 如果不是在iframe中，直接跳转
+                        window.location.href = `map.html?lat=${stationInfo.position.lat}&lng=${stationInfo.position.lng}&name=${encodeURIComponent(stationInfo.name)}`;
+                    }
+                });
+            }
+        });
+
         // Detect if in iframe, hide bottom navigation if so
         if (window.self !== window.top) {
             const bottomNav = document.getElementById('subBottomNav');

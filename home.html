@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Home - SolarRide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -54,7 +54,7 @@
                 <!-- 站点名称 -->
                 <div class="mb-4">
                     <h2 class="text-2xl font-bold mb-2 leading-tight" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
-                        Champs-Élysées Station
+                        Gare de Nantes Station
                     </h2>
                 </div>
                 
@@ -96,11 +96,11 @@
             <div class="flex gap-4 px-4 overflow-x-auto pb-2">
                 <div class="flex-shrink-0 w-72 bg-white rounded-3xl overflow-hidden card-shadow-lg">
                     <div class="h-36 image-placeholder">
-                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400" alt="Charging Station" class="w-full h-full object-cover">
+                        <img src="images/rider-1.png" alt="Gare de Nantes Station" class="w-full h-full object-cover">
                     </div>
                     <div class="p-5">
                         <div class="flex items-center justify-between mb-2">
-                            <h3 class="font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Champs-Élysées Station</h3>
+                            <h3 class="font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Gare de Nantes Station</h3>
                             <span class="text-xs px-3 py-1.5 gradient-bg-green text-green-700 rounded-full font-medium">8 Available</span>
                         </div>
                         <div class="flex items-center gap-4 text-xs text-gray-500 mb-2">
@@ -115,11 +115,11 @@
                 </div>
                 <div class="flex-shrink-0 w-72 bg-white rounded-3xl overflow-hidden card-shadow-lg">
                     <div class="h-36 image-placeholder">
-                        <img src="https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=400" alt="Charging Station" class="w-full h-full object-cover">
+                        <img src="images/rider-1.png" alt="Château Station" class="w-full h-full object-cover">
                     </div>
                     <div class="p-5">
                         <div class="flex items-center justify-between mb-2">
-                            <h3 class="font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Eiffel Tower Station</h3>
+                            <h3 class="font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Château Station</h3>
                             <span class="text-xs px-3 py-1.5 gradient-bg-yellow text-yellow-700 rounded-full font-medium">2 Available</span>
                         </div>
                         <div class="flex items-center gap-4 text-xs text-gray-500 mb-2">
@@ -200,7 +200,7 @@
                         <div class="text-purple-900 font-bold mb-1">Join Green Energy Member</div>
                         <div class="text-purple-700 text-sm">Save more, enjoy exclusive offers</div>
                     </div>
-                    <button class="bg-white text-purple-700 px-5 py-2.5 rounded-2xl font-bold text-sm card-shadow">
+                    <button class="bg-white text-purple-700 px-5 py-2.5 rounded-2xl font-bold text-sm card-shadow" onclick="navigateToSubscription()">
                         Join Now
                     </button>
                 </div>
@@ -208,12 +208,12 @@
             
             <div class="bg-white rounded-3xl overflow-hidden card-shadow-lg">
                 <div class="h-36 image-placeholder">
-                    <img src="https://images.unsplash.com/photo-1501339847302-ac426a4c7c6f?w=400" alt="Partner Merchant" class="w-full h-full object-cover">
+                    <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?w=400" alt="Partner Merchant" class="w-full h-full object-cover">
                 </div>
                 <div class="p-5">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h3 class="font-bold primary-green mb-1" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Starbucks (Champs-Élysées)</h3>
+                            <h3 class="font-bold primary-green mb-1" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Starbucks (Gare de Nantes)</h3>
                             <div class="text-xs text-gray-500">Member 15% Off</div>
                         </div>
                         <span class="text-xs px-3 py-1.5 gradient-bg-pink text-pink-700 rounded-full font-medium">Deal</span>
@@ -249,6 +249,20 @@
     </div>
 
     <script>
+        // 导航到订阅页面
+        function navigateToSubscription() {
+            if (window.parent && window.parent !== window) {
+                // 在iframe中，通过postMessage通知父页面
+                window.parent.postMessage({
+                    type: 'navigate',
+                    page: 'subscription'
+                }, '*');
+            } else {
+                // 如果不是在iframe中，直接跳转
+                window.location.href = 'subscription.html';
+            }
+        }
+
         // Detect if in iframe, hide bottom navigation if so
         if (window.self !== window.top) {
             const bottomNav = document.getElementById('subBottomNav');
