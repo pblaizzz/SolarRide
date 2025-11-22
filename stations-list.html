@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Nearby Stations - SolarRide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,17 +24,17 @@
     <div class="pb-6 custom-scrollbar overflow-y-auto" style="height: calc(100vh - 60px);">
         <!-- Station List -->
         <div class="px-4 mt-4 space-y-4">
-            <!-- Station 1: Champs-Élysées -->
+            <!-- Station 1: Gare de Nantes -->
             <div class="bg-white rounded-3xl overflow-hidden card-shadow-lg">
                 <div class="h-48 image-placeholder relative">
-                    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400" alt="Champs-Élysées Station" class="w-full h-full object-cover">
+                    <img src="images/rider-1.png" alt="Gare de Nantes Station" class="w-full h-full object-cover">
                     <div class="absolute top-4 right-4">
                         <span class="px-3 py-1.5 gradient-bg-green text-green-700 rounded-full text-xs font-bold">8 Available</span>
                     </div>
                 </div>
                 <div class="p-5">
                     <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Champs-Élysées Station</h3>
+                        <h3 class="text-xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Gare de Nantes Station</h3>
                         <div class="flex items-center gap-1">
                             <i class="fas fa-star text-yellow-500 text-sm"></i>
                             <span class="text-sm font-semibold">4.8</span>
@@ -42,7 +42,7 @@
                     </div>
                     <div class="flex items-center gap-2 text-sm text-gray-600 mb-3">
                         <i class="fas fa-map-marker-alt text-green-600"></i>
-                        <span>101 Avenue des Champs-Élysées, 75008 Paris</span>
+                        <span>27 Boulevard de Stalingrad, 44000 Nantes</span>
                     </div>
                     <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
                         <span><i class="fas fa-walking"></i> 5 min walk</span>
@@ -50,7 +50,7 @@
                         <span><i class="fas fa-solar-panel text-yellow-500"></i> 85% Solar</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button class="flex-1 border-2 border-green-600 text-green-600 py-2.5 rounded-2xl font-bold text-sm">
+                        <button class="navigate-btn flex-1 border-2 border-green-600 text-green-600 py-2.5 rounded-2xl font-bold text-sm" data-station="champs">
                             <i class="fas fa-directions mr-1"></i>Navigate
                         </button>
                         <button class="flex-1 gradient-bg text-white py-2.5 rounded-2xl font-bold text-sm card-shadow" onclick="window.parent.postMessage({type: 'navigate', page: 'station-detail'}, '*')">
@@ -60,17 +60,17 @@
                 </div>
             </div>
 
-            <!-- Station 2: Eiffel Tower -->
+            <!-- Station 2: Château -->
             <div class="bg-white rounded-3xl overflow-hidden card-shadow-lg">
                 <div class="h-48 image-placeholder relative">
-                    <img src="https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=400" alt="Eiffel Tower Station" class="w-full h-full object-cover">
+                    <img src="images/rider-1.png" alt="Château Station" class="w-full h-full object-cover">
                     <div class="absolute top-4 right-4">
                         <span class="px-3 py-1.5 gradient-bg-yellow text-yellow-700 rounded-full text-xs font-bold">2 Available</span>
                     </div>
                 </div>
                 <div class="p-5">
                     <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Eiffel Tower Station</h3>
+                        <h3 class="text-xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Château Station</h3>
                         <div class="flex items-center gap-1">
                             <i class="fas fa-star text-yellow-500 text-sm"></i>
                             <span class="text-sm font-semibold">4.6</span>
@@ -78,7 +78,7 @@
                     </div>
                     <div class="flex items-center gap-2 text-sm text-gray-600 mb-3">
                         <i class="fas fa-map-marker-alt text-green-600"></i>
-                        <span>Champ de Mars, 5 Avenue Anatole France, 75007 Paris</span>
+                        <span>4 Place Marc Elder, 44000 Nantes</span>
                     </div>
                     <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
                         <span><i class="fas fa-walking"></i> 12 min walk</span>
@@ -86,7 +86,7 @@
                         <span><i class="fas fa-solar-panel text-yellow-500"></i> 72% Solar</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button class="flex-1 border-2 border-green-600 text-green-600 py-2.5 rounded-2xl font-bold text-sm">
+                        <button class="navigate-btn flex-1 border-2 border-green-600 text-green-600 py-2.5 rounded-2xl font-bold text-sm" data-station="eiffel">
                             <i class="fas fa-directions mr-1"></i>Navigate
                         </button>
                         <button class="flex-1 gradient-bg text-white py-2.5 rounded-2xl font-bold text-sm card-shadow" onclick="window.parent.postMessage({type: 'navigate', page: 'station-detail'}, '*')">
@@ -96,17 +96,17 @@
                 </div>
             </div>
 
-            <!-- Station 3: Montmartre -->
+            <!-- Station 3: Machines de l'île -->
             <div class="bg-white rounded-3xl overflow-hidden card-shadow-lg">
                 <div class="h-48 image-placeholder relative">
-                    <img src="https://images.unsplash.com/photo-1501339847302-ac426a4c7c6f?w=400" alt="Montmartre Station" class="w-full h-full object-cover">
+                    <img src="images/rider-1.png" alt="Machines de l'île Station" class="w-full h-full object-cover">
                     <div class="absolute top-4 right-4">
                         <span class="px-3 py-1.5 gradient-bg-green text-green-700 rounded-full text-xs font-bold">12 Available</span>
                     </div>
                 </div>
                 <div class="p-5">
                     <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Montmartre Station</h3>
+                        <h3 class="text-xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Machines de l'île Station</h3>
                         <div class="flex items-center gap-1">
                             <i class="fas fa-star text-yellow-500 text-sm"></i>
                             <span class="text-sm font-semibold">4.9</span>
@@ -114,7 +114,7 @@
                     </div>
                     <div class="flex items-center gap-2 text-sm text-gray-600 mb-3">
                         <i class="fas fa-map-marker-alt text-green-600"></i>
-                        <span>35 Rue du Chevalier de la Barre, 75018 Paris</span>
+                        <span>Parc des Chantiers, Boulevard Léon Bureau, 44200 Nantes</span>
                     </div>
                     <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
                         <span><i class="fas fa-walking"></i> 8 min walk</span>
@@ -122,7 +122,7 @@
                         <span><i class="fas fa-solar-panel text-yellow-500"></i> 90% Solar</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button class="flex-1 border-2 border-green-600 text-green-600 py-2.5 rounded-2xl font-bold text-sm">
+                        <button class="navigate-btn flex-1 border-2 border-green-600 text-green-600 py-2.5 rounded-2xl font-bold text-sm" data-station="montmartre">
                             <i class="fas fa-directions mr-1"></i>Navigate
                         </button>
                         <button class="flex-1 gradient-bg text-white py-2.5 rounded-2xl font-bold text-sm card-shadow" onclick="window.parent.postMessage({type: 'navigate', page: 'station-detail'}, '*')">
@@ -135,6 +135,55 @@
     </div>
 
     <script>
+        // 站点信息映射（南特真实地点）
+        const stationsData = {
+            champs: {
+                name: 'Gare de Nantes Station',
+                position: { lat: 47.2173, lng: -1.5424 },
+                address: '27 Boulevard de Stalingrad, 44000 Nantes'
+            },
+            eiffel: {
+                name: 'Château Station',
+                position: { lat: 47.2159, lng: -1.5509 },
+                address: '4 Place Marc Elder, 44000 Nantes'
+            },
+            montmartre: {
+                name: 'Machines de l\'île Station',
+                position: { lat: 47.2065, lng: -1.5595 },
+                address: 'Parc des Chantiers, Boulevard Léon Bureau, 44200 Nantes'
+            }
+        };
+
+        // Navigate按钮点击事件
+        document.addEventListener('DOMContentLoaded', () => {
+            const navigateButtons = document.querySelectorAll('.navigate-btn');
+            navigateButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const stationId = btn.getAttribute('data-station');
+                    const stationInfo = stationsData[stationId];
+                    
+                    if (stationInfo) {
+                        // 发送导航消息到父页面，包含位置信息
+                        if (window.parent && window.parent !== window) {
+                            window.parent.postMessage({
+                                type: 'navigate',
+                                page: 'map',
+                                location: {
+                                    lat: stationInfo.position.lat,
+                                    lng: stationInfo.position.lng,
+                                    name: stationInfo.name,
+                                    address: stationInfo.address
+                                }
+                            }, '*');
+                        } else {
+                            // 如果不是在iframe中，直接跳转
+                            window.location.href = `map.html?lat=${stationInfo.position.lat}&lng=${stationInfo.position.lng}&name=${encodeURIComponent(stationInfo.name)}`;
+                        }
+                    }
+                });
+            });
+        });
+
         // Detect if in iframe, hide bottom navigation if so
         if (window.self !== window.top) {
             // Navigation is handled by parent frame

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Riders - SolarRide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -31,7 +31,7 @@
         <div class="px-4 mt-4 space-y-4">
             <div class="bg-white rounded-3xl overflow-hidden card-shadow-lg">
                 <div class="h-40 image-placeholder">
-                    <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800" alt="Group Ride" class="w-full h-full object-cover">
+                    <img src="https://images.unsplash.com/photo-1551524164-6cf77f7e1e02?w=800" alt="Group Ride" class="w-full h-full object-cover">
                 </div>
                 <div class="p-5">
                     <div class="flex items-center gap-2 mb-2">
@@ -54,7 +54,7 @@
                         </div>
                         <button class="gradient-bg text-white px-5 py-2.5 rounded-2xl text-sm font-bold card-shadow join-btn" 
                                 data-title="Weekend Riverside Ride"
-                                data-image="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800"
+                                data-image="https://images.unsplash.com/photo-1551524164-6cf77f7e1e02?w=800"
                                 data-tags='["Group Ride", "Eco Commute"]'
                                 data-date="Sat 9:00 AM"
                                 data-distance="15 km"
@@ -77,10 +77,10 @@
                         <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">Charge Together</span>
                         <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">Coffee Time</span>
                     </div>
-                    <h3 class="font-bold text-lg mb-2">Montmartre Station + Coffee</h3>
+                    <h3 class="font-bold text-lg mb-2">Machines de l'île Station + Coffee</h3>
                     <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
                         <span><i class="far fa-calendar"></i> Today 2:00 PM</span>
-                        <span><i class="fas fa-map-marker-alt"></i> Montmartre Station</span>
+                        <span><i class="fas fa-map-marker-alt"></i> Machines de l'île Station</span>
                     </div>
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
@@ -91,11 +91,11 @@
                             <span class="text-sm text-gray-600">2/5 joined</span>
                         </div>
                         <button class="gradient-bg text-white px-4 py-2 rounded-xl text-sm font-bold join-btn"
-                                data-title="Montmartre Station + Coffee"
+                                data-title="Machines de l'île Station + Coffee"
                                 data-image="https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800"
                                 data-tags='["Charge Together", "Coffee Time"]'
                                 data-date="Today 2:00 PM"
-                                data-location="Montmartre Station"
+                                data-location="Machines de l'île Station"
                                 data-joined="2"
                                 data-total="5"
                                 onclick="joinActivity(this)"
@@ -173,8 +173,8 @@
         </div>
     </div>
 
-    <!-- Custom Modal for Join Confirmation -->
-    <div id="joinModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center px-4" onclick="if(event.target === this) closeJoinModal()">
+    <!-- Join Activity Confirmation Modal -->
+    <div id="joinModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center px-4" style="display: none !important; visibility: hidden;" onclick="if(event.target === this) closeJoinModal()">
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full card-shadow-lg transform transition-all duration-300 scale-95 opacity-0" id="joinModalContent" onclick="event.stopPropagation()">
             <div class="text-center mb-6">
                 <div class="w-16 h-16 mx-auto mb-4 gradient-bg rounded-full flex items-center justify-center">
@@ -187,15 +187,15 @@
                 <button class="flex-1 border-2 border-gray-300 text-gray-700 py-3 rounded-2xl font-bold text-sm hover:bg-gray-50 transition-colors" onclick="closeJoinModal()">
                     Cancel
                 </button>
-                <button class="flex-1 gradient-bg text-white py-3 rounded-2xl font-bold text-sm card-shadow" id="confirmJoinBtn">
+                <button class="flex-1 gradient-bg text-white py-3 rounded-2xl font-bold text-sm card-shadow hover:opacity-90 transition-opacity" id="confirmJoinBtn">
                     Confirm
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Custom Success Toast -->
-    <div id="successToast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-white rounded-2xl px-6 py-4 card-shadow-lg z-50 hidden items-center gap-3 max-w-sm w-full mx-4">
+    <!-- Success Toast -->
+    <div id="successToast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-white rounded-2xl px-6 py-4 card-shadow-lg z-50 hidden gap-3 max-w-sm w-full mx-4" style="display: none !important; visibility: hidden;">
         <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
             <i class="fas fa-check text-white"></i>
         </div>
@@ -214,31 +214,52 @@
 
         // Show join confirmation modal
         function joinActivity(button) {
-            const title = button.getAttribute('data-title');
-            
-            // Get existing activities
-            const activities = JSON.parse(localStorage.getItem('myActivities') || '[]');
-            
-            // Check if already joined
-            if (activities.some(act => act.title === title)) {
-                showSuccessToast('You have already joined this activity!', false);
-                return;
-            }
+            try {
+                const title = button.getAttribute('data-title');
+                
+                if (!title) {
+                    console.warn('Button missing data-title attribute');
+                    return;
+                }
+                
+                // Get existing activities
+                const activities = JSON.parse(localStorage.getItem('myActivities') || '[]');
+                
+                // Check if already joined
+                if (activities.some(act => act.title === title)) {
+                    showSuccessToast('You have already joined this activity!', false);
+                    return;
+                }
 
-            // Store button reference
-            currentJoinButton = button;
-            
-            // Update modal content
-            document.getElementById('joinModalTitle').textContent = `Join "${title}"?`;
-            
-            // Show modal
-            const modal = document.getElementById('joinModal');
-            const modalContent = document.getElementById('joinModalContent');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modalContent.classList.remove('scale-95', 'opacity-0');
-                modalContent.classList.add('scale-100', 'opacity-100');
-            }, 10);
+                // Store button reference
+                currentJoinButton = button;
+                
+                // Update modal content
+                const modalTitle = document.getElementById('joinModalTitle');
+                if (modalTitle) {
+                    modalTitle.textContent = `Join "${title}"?`;
+                }
+                
+                // Show modal
+                const modal = document.getElementById('joinModal');
+                const modalContent = document.getElementById('joinModalContent');
+                
+                if (!modal || !modalContent) {
+                    console.warn('Modal elements not found');
+                    return;
+                }
+                
+                modal.style.display = 'flex';
+                modal.style.visibility = 'visible';
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            } catch (e) {
+                console.error('Error showing join modal:', e);
+            }
         }
 
         // Confirm join
@@ -286,55 +307,83 @@
 
         // Close join modal
         function closeJoinModal() {
-            const modal = document.getElementById('joinModal');
-            const modalContent = document.getElementById('joinModalContent');
-            modalContent.classList.remove('scale-100', 'opacity-100');
-            modalContent.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-            currentJoinButton = null;
+            try {
+                const modal = document.getElementById('joinModal');
+                const modalContent = document.getElementById('joinModalContent');
+                
+                if (!modal || !modalContent) {
+                    return;
+                }
+                
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    modal.style.visibility = 'hidden';
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 300);
+                currentJoinButton = null;
+            } catch (e) {
+                console.error('Error closing modal:', e);
+            }
         }
 
         // Show success toast
         function showSuccessToast(message, isSuccess = true) {
-            const toast = document.getElementById('successToast');
-            const toastMessage = document.getElementById('successToastMessage');
-            const iconContainer = toast.querySelector('.gradient-bg');
-            const icon = toast.querySelector('.fa-check, .fa-exclamation');
-            
-            toastMessage.textContent = message;
-            
-            if (!isSuccess) {
-                iconContainer.classList.remove('gradient-bg');
-                iconContainer.classList.add('bg-yellow-500');
-                if (icon) {
-                    icon.classList.remove('fa-check');
-                    icon.classList.add('fa-exclamation');
+            try {
+                const toast = document.getElementById('successToast');
+                const toastMessage = document.getElementById('successToastMessage');
+                
+                if (!toast || !toastMessage) {
+                    console.warn('Toast elements not found');
+                    return;
                 }
-            } else {
-                iconContainer.classList.remove('bg-yellow-500');
-                iconContainer.classList.add('gradient-bg');
-                if (icon) {
-                    icon.classList.remove('fa-exclamation');
-                    icon.classList.add('fa-check');
+                
+                toastMessage.textContent = message;
+                
+                const iconContainer = toast.querySelector('.gradient-bg');
+                const icon = toast.querySelector('.fa-check, .fa-exclamation');
+                
+                if (iconContainer) {
+                    if (!isSuccess) {
+                        iconContainer.classList.remove('gradient-bg');
+                        iconContainer.classList.add('bg-yellow-500');
+                        if (icon) {
+                            icon.classList.remove('fa-check');
+                            icon.classList.add('fa-exclamation');
+                        }
+                    } else {
+                        iconContainer.classList.remove('bg-yellow-500');
+                        iconContainer.classList.add('gradient-bg');
+                        if (icon) {
+                            icon.classList.remove('fa-exclamation');
+                            icon.classList.add('fa-check');
+                        }
+                    }
                 }
+                
+                toast.style.display = 'flex';
+                toast.style.visibility = 'visible';
+                toast.classList.remove('hidden');
+                toast.classList.add('flex', 'items-center');
+                
+                // Auto close after 3 seconds
+                setTimeout(() => {
+                    closeSuccessToast();
+                }, 3000);
+            } catch (e) {
+                console.error('Error showing success toast:', e);
             }
-            
-            toast.classList.remove('hidden');
-            toast.classList.add('flex');
-            
-            // Auto close after 3 seconds
-            setTimeout(() => {
-                closeSuccessToast();
-            }, 3000);
         }
 
         // Close success toast
         function closeSuccessToast() {
             const toast = document.getElementById('successToast');
+            toast.style.display = 'none';
+            toast.style.visibility = 'hidden';
             toast.classList.add('hidden');
-            toast.classList.remove('flex');
+            toast.classList.remove('flex', 'items-center');
         }
 
         // Bind confirm button
@@ -347,30 +396,112 @@
 
         // Check and update button states on page load
         function updateJoinButtons() {
-            const activities = JSON.parse(localStorage.getItem('myActivities') || '[]');
-            const joinButtons = document.querySelectorAll('.join-btn');
-            
-            joinButtons.forEach(button => {
-                const title = button.getAttribute('data-title');
-                if (activities.some(act => act.title === title)) {
-                    button.textContent = 'Joined';
-                    button.classList.remove('gradient-bg', 'text-white');
-                    button.classList.add('bg-gray-200', 'text-gray-600', 'cursor-not-allowed');
-                    button.disabled = true;
+            try {
+                const activities = JSON.parse(localStorage.getItem('myActivities') || '[]');
+                const joinButtons = document.querySelectorAll('.join-btn');
+                
+                if (joinButtons.length === 0) {
+                    // Buttons not loaded yet, will retry on DOMContentLoaded
+                    return;
                 }
-            });
-        }
-
-        // Initialize on page load
-        updateJoinButtons();
-
-        // Detect if in iframe, hide bottom navigation if so
-        if (window.self !== window.top) {
-            const bottomNav = document.getElementById('subBottomNav');
-            if (bottomNav) {
-                bottomNav.style.display = 'none';
+                
+                joinButtons.forEach(button => {
+                    const title = button.getAttribute('data-title');
+                    if (title && activities.some(act => act.title === title)) {
+                        button.textContent = 'Joined';
+                        button.classList.remove('gradient-bg', 'text-white');
+                        button.classList.add('bg-gray-200', 'text-gray-600', 'cursor-not-allowed');
+                        button.disabled = true;
+                    }
+                });
+            } catch (e) {
+                console.error('Error updating join buttons:', e);
             }
         }
+
+        // Ensure modal and toast are hidden on page load
+        function initializeModal() {
+            try {
+                const modal = document.getElementById('joinModal');
+                const modalContent = document.getElementById('joinModalContent');
+                if (modal) {
+                    modal.style.display = 'none';
+                    modal.style.visibility = 'hidden';
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+                if (modalContent) {
+                    modalContent.classList.add('scale-95', 'opacity-0');
+                    modalContent.classList.remove('scale-100', 'opacity-100');
+                }
+                
+                const toast = document.getElementById('successToast');
+                if (toast) {
+                    toast.style.display = 'none';
+                    toast.style.visibility = 'hidden';
+                    toast.classList.add('hidden');
+                    toast.classList.remove('flex', 'items-center');
+                }
+            } catch (e) {
+                console.error('Error initializing modal:', e);
+            }
+        }
+
+        // Initialize when DOM is ready
+        function initializePage() {
+            try {
+                initializeModal();
+                updateJoinButtons();
+                
+                // Detect if in iframe, hide bottom navigation if so
+                if (window.self !== window.top) {
+                    const bottomNav = document.getElementById('subBottomNav');
+                    if (bottomNav) {
+                        bottomNav.style.display = 'none';
+                    }
+                }
+            } catch (e) {
+                console.error('Error initializing page:', e);
+            }
+        }
+
+        // Initialize based on document state
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            // DOM already loaded, initialize immediately
+            initializePage();
+        }
+        
+        // Also ensure initialization on window load (for iframe compatibility)
+        window.addEventListener('load', function() {
+            console.log('friends.html: window.load event fired');
+            initializePage();
+            // Notify parent that page is fully loaded
+            if (window.self !== window.top) {
+                try {
+                    console.log('friends.html: Sending pageLoaded message to parent');
+                    window.parent.postMessage({type: 'pageLoaded', page: 'friends'}, '*');
+                } catch (e) {
+                    console.error('friends.html: Error sending message to parent:', e);
+                }
+            }
+        });
+        
+        // Also notify on DOMContentLoaded as backup
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('friends.html: DOMContentLoaded event fired');
+            // Small delay to ensure everything is ready
+            setTimeout(function() {
+                if (window.self !== window.top) {
+                    try {
+                        window.parent.postMessage({type: 'pageLoaded', page: 'friends'}, '*');
+                    } catch (e) {
+                        // Ignore cross-origin errors
+                    }
+                }
+            }, 100);
+        });
     </script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Me - SolarRide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,7 +24,7 @@
                 </div>
                 <div class="flex-1">
                     <div class="text-lg font-bold mb-1">Rider</div>
-                    <div class="text-sm opacity-90">138****8888</div>
+                    <div class="text-sm opacity-90">00001</div>
                 </div>
                 <div class="text-right">
                     <div class="text-xs opacity-75 mb-1">Member</div>
@@ -94,9 +94,9 @@
             <div class="flex items-center justify-between">
                 <div>
                     <div class="text-purple-900 font-bold mb-1">Green Energy Member</div>
-                    <div class="text-purple-700 text-sm">Valid until 2024-12-31</div>
+                    <div class="text-purple-700 text-sm" id="subscriptionExpirationDate">Valid until 2024-12-31</div>
                 </div>
-                <button class="bg-white text-purple-700 px-5 py-2.5 rounded-2xl font-bold text-sm card-shadow">
+                <button class="bg-white text-purple-700 px-5 py-2.5 rounded-2xl font-bold text-sm card-shadow hover:opacity-90 transition-opacity" onclick="showRenewModal()">
                     Renew
                 </button>
             </div>
@@ -106,7 +106,7 @@
         <div class="mx-4 mt-4 bg-white rounded-3xl p-5 card-shadow-lg">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Eco Impact</h2>
-                <span class="text-sm primary-green">View Details <i class="fas fa-chevron-right text-xs"></i></span>
+                <!-- <span class="text-sm primary-green">View Details <i class="fas fa-chevron-right text-xs"></i></span> -->
             </div>
             <div class="grid grid-cols-3 gap-4">
                 <div class="text-center p-4 gradient-bg-green rounded-2xl">
@@ -133,13 +133,13 @@
                 </div>
                 <i class="fas fa-chevron-right text-gray-400"></i>
             </div>
-            <div class="flex items-center justify-between p-4 border-b border-gray-100">
-                <div class="flex items-center gap-3">
+            <!-- <div class="flex items-center justify-between p-4 border-b border-gray-100"> -->
+                <!-- <div class="flex items-center gap-3">
                     <i class="fas fa-heart text-red-500"></i>
                     <span class="font-medium">My Favorites</span>
-                </div>
-                <i class="fas fa-chevron-right text-gray-400"></i>
-            </div>
+                </div> -->
+                <!-- <i class="fas fa-chevron-right text-gray-400"></i> -->
+            <!-- </div> -->
             <div class="flex items-center justify-between p-4 border-b border-gray-100">
                 <div class="flex items-center gap-3">
                     <i class="fas fa-headset primary-green"></i>
@@ -182,6 +182,46 @@
         </div>
     </div>
 
+    <!-- Renew Subscription Confirmation Modal -->
+    <div id="renewModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center px-4" onclick="if(event.target === this) closeRenewModal()">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full card-shadow-lg transform transition-all duration-300 scale-95 opacity-0" id="renewModalContent" onclick="event.stopPropagation()">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 mx-auto mb-4 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="fas fa-sync-alt text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Renew Subscription</h3>
+                <p class="text-sm text-gray-600" id="renewModalTitle">Your subscription expires on 2024-12-31. Would you like to renew it now?</p>
+                <div class="mt-4 p-3 bg-purple-50 rounded-xl">
+                    <p class="text-xs text-purple-700 font-medium">
+                        <i class="fas fa-info-circle mr-1"></i>Renewing will extend your membership for another period
+                    </p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button class="flex-1 border-2 border-gray-300 text-gray-700 py-3 rounded-2xl font-bold text-sm hover:bg-gray-50 transition-colors" onclick="closeRenewModal()">
+                    Cancel
+                </button>
+                <button class="flex-1 gradient-bg text-white py-3 rounded-2xl font-bold text-sm card-shadow hover:opacity-90 transition-opacity" id="confirmRenewBtn">
+                    Renew Now
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="successToast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-white rounded-2xl px-6 py-4 card-shadow-lg z-50 hidden items-center gap-3 max-w-sm w-full mx-4">
+        <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-check text-white"></i>
+        </div>
+        <div class="flex-1">
+            <div class="font-bold text-sm text-gray-800">Success!</div>
+            <div class="text-xs text-gray-600" id="successToastMessage">Subscription renewed successfully</div>
+        </div>
+        <button onclick="closeSuccessToast()" class="text-gray-400 hover:text-gray-600">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
     <script>
         // Detect if in iframe, hide bottom navigation if so
         if (window.self !== window.top) {
@@ -190,6 +230,128 @@
                 bottomNav.style.display = 'none';
             }
         }
+
+        // Load and display subscription expiration date
+        function loadSubscriptionExpiration() {
+            const subscriptionInfo = JSON.parse(localStorage.getItem('subscriptionInfo') || 'null');
+            if (subscriptionInfo && subscriptionInfo.expirationDate) {
+                const expirationElement = document.getElementById('subscriptionExpirationDate');
+                if (expirationElement) {
+                    expirationElement.textContent = `Valid until ${subscriptionInfo.expirationDate}`;
+                }
+            }
+        }
+
+        // Listen for subscription updates from localStorage
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'subscriptionInfo') {
+                loadSubscriptionExpiration();
+            }
+        });
+
+        // Listen for subscription updates from parent window (if in iframe)
+        if (window.self !== window.top) {
+            window.addEventListener('message', function(event) {
+                if (event.data && event.data.type === 'subscriptionUpdated') {
+                    loadSubscriptionExpiration();
+                }
+            });
+        }
+
+        // Load subscription info on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSubscriptionExpiration();
+        });
+
+        // Show renew subscription modal
+        function showRenewModal() {
+            // Get current expiration date from localStorage or page
+            const subscriptionInfo = JSON.parse(localStorage.getItem('subscriptionInfo') || 'null');
+            let expirationDate = '2024-12-31';
+            
+            if (subscriptionInfo && subscriptionInfo.expirationDate) {
+                expirationDate = subscriptionInfo.expirationDate;
+            } else {
+                // Fallback to page content
+                const expirationElement = document.getElementById('subscriptionExpirationDate');
+                if (expirationElement) {
+                    expirationDate = expirationElement.textContent.replace('Valid until ', '');
+                }
+            }
+            
+            // Update modal content
+            document.getElementById('renewModalTitle').textContent = `Your subscription expires on ${expirationDate}. Would you like to renew it now?`;
+            
+            // Show modal
+            const modal = document.getElementById('renewModal');
+            const modalContent = document.getElementById('renewModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        // Confirm renew subscription
+        function confirmRenew() {
+            // Close modal
+            closeRenewModal();
+            
+            // Navigate to subscription page
+            if (window.self !== window.top) {
+                // If in iframe, send message to parent
+                window.parent.postMessage({type: 'navigate', page: 'subscription'}, '*');
+            } else {
+                // If standalone, navigate directly
+                window.location.href = 'subscription.html';
+            }
+            
+            // Show success message after a short delay
+            setTimeout(() => {
+                showSuccessToast('Redirecting to subscription center...');
+            }, 500);
+        }
+
+        // Close renew modal
+        function closeRenewModal() {
+            const modal = document.getElementById('renewModal');
+            const modalContent = document.getElementById('renewModalContent');
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Show success toast
+        function showSuccessToast(message) {
+            const toast = document.getElementById('successToast');
+            const toastMessage = document.getElementById('successToastMessage');
+            toastMessage.textContent = message;
+            
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            
+            // Auto close after 3 seconds
+            setTimeout(() => {
+                closeSuccessToast();
+            }, 3000);
+        }
+
+        // Close success toast
+        function closeSuccessToast() {
+            const toast = document.getElementById('successToast');
+            toast.classList.add('hidden');
+            toast.classList.remove('flex');
+        }
+
+        // Bind confirm button
+        document.addEventListener('DOMContentLoaded', function() {
+            const confirmBtn = document.getElementById('confirmRenewBtn');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', confirmRenew);
+            }
+        });
     </script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Subscription Center - SolarRide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -32,7 +32,7 @@
                 <div class="px-3 py-1.5 gradient-bg-yellow text-yellow-900 rounded-full text-xs font-bold">Active</div>
             </div>
             <div class="text-sm text-purple-800 mb-2">
-                <i class="fas fa-calendar-check mr-2"></i>Valid until: <span class="font-bold">2024-12-31</span>
+                <i class="fas fa-calendar-check mr-2"></i>Valid until: <span class="font-bold" id="currentExpirationDate">2024-12-31</span>
             </div>
             <button class="w-full bg-white text-purple-700 py-2.5 rounded-2xl font-bold text-sm card-shadow mt-3">
                 Manage Subscription
@@ -228,11 +228,214 @@
         </div>
     </div>
 
+    <!-- Subscription Confirmation Modal -->
+    <div id="subscribeModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center px-4" onclick="if(event.target === this) closeSubscribeModal()">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full card-shadow-lg transform transition-all duration-300 scale-95 opacity-0" id="subscribeModalContent" onclick="event.stopPropagation()">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 mx-auto mb-4 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="fas fa-check text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Confirm Subscription</h3>
+                <p class="text-sm text-gray-600" id="subscribeModalTitle">Are you sure you want to subscribe to this plan?</p>
+                <div class="mt-4 p-3 bg-green-50 rounded-xl" id="subscribeModalDetails">
+                    <p class="text-xs text-gray-600" id="subscribeModalPrice"></p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button class="flex-1 border-2 border-gray-300 text-gray-700 py-3 rounded-2xl font-bold text-sm hover:bg-gray-50 transition-colors" onclick="closeSubscribeModal()">
+                    Cancel
+                </button>
+                <button class="flex-1 gradient-bg text-white py-3 rounded-2xl font-bold text-sm card-shadow hover:opacity-90 transition-opacity" id="confirmSubscribeBtn">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="successToast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-white rounded-2xl px-6 py-4 card-shadow-lg z-50 hidden items-center gap-3 max-w-sm w-full mx-4">
+        <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-check text-white"></i>
+        </div>
+        <div class="flex-1">
+            <div class="font-bold text-sm text-gray-800">Success!</div>
+            <div class="text-xs text-gray-600" id="successToastMessage">Your subscription has been activated</div>
+        </div>
+        <button onclick="closeSuccessToast()" class="text-gray-400 hover:text-gray-600">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
     <script>
         // Detect if in iframe, hide bottom navigation if so
         if (window.self !== window.top) {
             // Navigation is handled by parent frame
         }
+
+        // Store current selected subscription plan
+        let currentSubscribePlan = null;
+
+        // Show subscription confirmation modal
+        function showSubscribeModal(planType, price, period) {
+            currentSubscribePlan = { planType, price, period };
+            
+            // Update modal content
+            const titleMap = {
+                'Monthly': 'Monthly Plan',
+                'Quarterly': 'Quarterly Plan',
+                'Annual': 'Annual Plan'
+            };
+            
+            document.getElementById('subscribeModalTitle').textContent = `Are you sure you want to subscribe to the ${titleMap[planType]}?`;
+            document.getElementById('subscribeModalPrice').textContent = `${price} / ${period}`;
+            
+            // Show modal
+            const modal = document.getElementById('subscribeModal');
+            const modalContent = document.getElementById('subscribeModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        // Confirm subscription
+        function confirmSubscribe() {
+            if (!currentSubscribePlan) return;
+
+            const { planType, price } = currentSubscribePlan;
+            
+            // Calculate new expiration date
+            const newExpirationDate = calculateNewExpirationDate(planType);
+            
+            // Save subscription info to localStorage
+            const subscriptionInfo = {
+                planType: planType,
+                expirationDate: newExpirationDate,
+                subscribedAt: new Date().toISOString()
+            };
+            localStorage.setItem('subscriptionInfo', JSON.stringify(subscriptionInfo));
+            
+            // Update current subscription status display
+            updateSubscriptionDisplay(newExpirationDate);
+            
+            // Notify parent window (if in iframe) about subscription update
+            if (window.self !== window.top) {
+                window.parent.postMessage({
+                    type: 'subscriptionUpdated',
+                    expirationDate: newExpirationDate
+                }, '*');
+            }
+            
+            // Close modal
+            closeSubscribeModal();
+            
+            // Show success message
+            showSuccessToast(`${planType} subscription activated! Valid until ${formatDate(newExpirationDate)}`);
+            
+            currentSubscribePlan = null;
+        }
+
+        // Calculate new expiration date based on plan type
+        function calculateNewExpirationDate(planType) {
+            // Get current expiration date from localStorage or use today's date
+            const existingSubscription = JSON.parse(localStorage.getItem('subscriptionInfo') || 'null');
+            let baseDate;
+            
+            if (existingSubscription && existingSubscription.expirationDate) {
+                // If there's an existing subscription, extend from expiration date
+                baseDate = new Date(existingSubscription.expirationDate);
+                // If expiration date is in the past, use today instead
+                if (baseDate < new Date()) {
+                    baseDate = new Date();
+                }
+            } else {
+                // New subscription, start from today
+                baseDate = new Date();
+            }
+            
+            // Add period based on plan type
+            const newDate = new Date(baseDate);
+            if (planType === 'Monthly') {
+                newDate.setMonth(newDate.getMonth() + 1);
+            } else if (planType === 'Quarterly') {
+                newDate.setMonth(newDate.getMonth() + 3);
+            } else if (planType === 'Annual') {
+                newDate.setFullYear(newDate.getFullYear() + 1);
+            }
+            
+            return newDate.toISOString().split('T')[0]; // Return YYYY-MM-DD format
+        }
+
+        // Format date for display
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toISOString().split('T')[0]; // YYYY-MM-DD format
+        }
+
+        // Update subscription display on current page
+        function updateSubscriptionDisplay(expirationDate) {
+            // Update current subscription status card
+            const validUntilElement = document.getElementById('currentExpirationDate');
+            if (validUntilElement) {
+                validUntilElement.textContent = expirationDate;
+            }
+        }
+
+        // Close subscription modal
+        function closeSubscribeModal() {
+            const modal = document.getElementById('subscribeModal');
+            const modalContent = document.getElementById('subscribeModalContent');
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+            currentSubscribePlan = null;
+        }
+
+        // Show success toast
+        function showSuccessToast(message) {
+            const toast = document.getElementById('successToast');
+            const toastMessage = document.getElementById('successToastMessage');
+            toastMessage.textContent = message;
+            
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            
+            // Auto close after 3 seconds
+            setTimeout(() => {
+                closeSuccessToast();
+            }, 3000);
+        }
+
+        // Close success toast
+        function closeSuccessToast() {
+            const toast = document.getElementById('successToast');
+            toast.classList.add('hidden');
+            toast.classList.remove('flex');
+        }
+
+        // Load and display current subscription info
+        function loadSubscriptionInfo() {
+            const subscriptionInfo = JSON.parse(localStorage.getItem('subscriptionInfo') || 'null');
+            if (subscriptionInfo && subscriptionInfo.expirationDate) {
+                const expirationElement = document.getElementById('currentExpirationDate');
+                if (expirationElement) {
+                    expirationElement.textContent = subscriptionInfo.expirationDate;
+                }
+            }
+        }
+
+        // Bind confirm button
+        document.addEventListener('DOMContentLoaded', function() {
+            const confirmBtn = document.getElementById('confirmSubscribeBtn');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', confirmSubscribe);
+            }
+            // Load subscription info on page load
+            loadSubscriptionInfo();
+        });
 
         // Handle subscription button clicks
         document.querySelectorAll('button').forEach(button => {
@@ -240,7 +443,15 @@
                 button.addEventListener('click', function() {
                     const planType = this.textContent.includes('Monthly') ? 'Monthly' : 
                                    this.textContent.includes('Quarterly') ? 'Quarterly' : 'Annual';
-                    alert(`${planType} subscription selected. Payment integration coming soon.`);
+                    
+                    // Get price information
+                    const card = this.closest('.bg-white');
+                    const priceElement = card.querySelector('.text-2xl.font-bold');
+                    const price = priceElement ? priceElement.textContent : '';
+                    const period = planType === 'Monthly' ? 'month' : 
+                                  planType === 'Quarterly' ? '3 months' : 'year';
+                    
+                    showSubscribeModal(planType, price, period);
                 });
             }
         });

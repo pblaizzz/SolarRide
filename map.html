@@ -1,12 +1,104 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Map - SolarRide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="custom.css">
+    
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        crossorigin="anonymous"
+    />
+    <!-- Leaflet JS - 使用多个备用CDN -->
+    <script>
+        // 动态加载Leaflet库，支持多个备用CDN
+        function loadLeafletScript() {
+            const cdnSources = [
+                'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+                'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js'
+            ];
+            
+            let currentIndex = 0;
+            
+            function tryLoadScript(index) {
+                if (index >= cdnSources.length) {
+                    // 所有CDN都失败了
+                    console.error('All Leaflet CDN sources failed');
+                    const loadingIndicator = document.getElementById('mapLoading');
+                    if (loadingIndicator) {
+                        loadingIndicator.innerHTML = `
+                            <div class="text-center text-red-500">
+                                <i class="fas fa-exclamation-triangle text-4xl mb-2"></i>
+                                <div class="text-sm">无法加载地图库</div>
+                                <div class="text-xs mt-2">请检查网络连接或稍后重试</div>
+                            </div>
+                        `;
+                    }
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = cdnSources[index];
+                script.crossOrigin = 'anonymous';
+                script.onload = () => {
+                    console.log('Leaflet loaded from:', cdnSources[index]);
+                    // 设置全局标志，表示Leaflet已加载
+                    window.leafletLoaded = true;
+                    // 触发自定义事件
+                    window.dispatchEvent(new Event('leafletLoaded'));
+                };
+                script.onerror = () => {
+                    console.warn('Failed to load from:', cdnSources[index]);
+                    tryLoadScript(index + 1);
+                };
+                document.head.appendChild(script);
+            }
+            
+            tryLoadScript(0);
+        }
+        
+        // 页面加载时开始加载Leaflet
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadLeafletScript);
+        } else {
+            loadLeafletScript();
+        }
+    </script>
+
+    <style>
+        /* 自定义搜索联想容器（如果你之后想做联想列表，可用这套样式） */
+        .pac-container {
+            z-index: 10000 !important;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            margin-top: 8px;
+        }
+        .pac-item {
+            padding: 12px;
+            cursor: pointer;
+        }
+        .pac-item:hover {
+            background-color: #f0f0f0;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            position: relative;
+        }
+
+        /* 让 Leaflet 自带的 attribution 字体小一点，靠右下角 */
+        .leaflet-control-attribution {
+            font-size: 10px;
+        }
+    </style>
 </head>
 <body class="bg-gradient-to-b from-green-50 to-emerald-50">
     <!-- Top Search Bar -->
@@ -17,55 +109,47 @@
             </div>
             <div class="flex items-center gap-3 bg-white rounded-2xl px-4 py-2.5 card-shadow">
                 <i class="fas fa-search text-gray-400"></i>
-                <input type="text" placeholder="Search stations or locations" class="flex-1 bg-transparent text-sm outline-none">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search stations or locations"
+                    class="flex-1 bg-transparent text-sm outline-none"
+                    autocomplete="off"
+                >
+            </div>
+            <div class="mt-1 text-[10px] text-gray-400">
+                Press Enter to search (powered by OpenStreetMap / Nominatim)
             </div>
         </div>
     </div>
 
     <!-- Map Area -->
     <div class="relative" style="height: calc(100vh - 140px);">
-        <div class="w-full h-full image-placeholder bg-gray-200">
-            <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800" alt="Paris Map" class="w-full h-full object-cover opacity-60">
-            <div class="absolute inset-0 flex items-center justify-center">
-                <div class="text-center text-gray-500">
-                    <i class="fas fa-map-marked-alt text-4xl mb-2"></i>
-                    <div class="text-sm">Map View</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Map Markers -->
-        <div class="absolute top-1/4 left-1/4">
-            <div class="relative">
-                <div class="w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-lg"></div>
-                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white px-2 py-1 rounded text-xs font-medium shadow whitespace-nowrap">
-                    Champs-Élysées
-                </div>
-            </div>
-        </div>
-        <div class="absolute top-1/3 right-1/4">
-            <div class="relative">
-                <div class="w-4 h-4 bg-yellow-500 rounded-full border-2 border-white shadow-lg"></div>
-                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white px-2 py-1 rounded text-xs font-medium shadow whitespace-nowrap">
-                    Eiffel Tower
-                </div>
-            </div>
-        </div>
-        <div class="absolute bottom-1/3 left-1/3">
-            <div class="relative">
-                <div class="w-4 h-4 bg-red-500 rounded-full border-2 border-white shadow-lg"></div>
-                <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white px-2 py-1 rounded text-xs font-medium shadow whitespace-nowrap">
-                    Montmartre
-                </div>
+        <!-- Map Container -->
+        <div id="map" class="w-full h-full"></div>
+        
+        <!-- Loading Indicator -->
+        <div id="mapLoading" class="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-90 z-10">
+            <div class="text-center text-gray-500">
+                <i class="fas fa-spinner fa-spin text-4xl mb-2"></i>
+                <div class="text-sm">Loading map...</div>
             </div>
         </div>
 
         <!-- Floating Buttons -->
-        <div class="absolute top-20 right-4 flex flex-col gap-3">
-            <button class="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center">
+        <div class="absolute top-20 right-4 flex flex-col gap-3 z-20">
+            <button
+                id="locateBtn"
+                class="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+                title="Locate me"
+            >
                 <i class="fas fa-crosshairs text-green-600"></i>
             </button>
-            <button class="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center">
+            <button
+                id="filterBtn"
+                class="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+                title="Filter stations"
+            >
                 <i class="fas fa-filter text-gray-600"></i>
             </button>
         </div>
@@ -77,10 +161,12 @@
             <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-3"></div>
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <h3 class="font-bold text-lg mb-1 primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Champs-Élysées Station</h3>
+                    <h3 class="font-bold text-lg mb-1 primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
+                        Gare de Nantes Station
+                    </h3>
                     <div class="flex items-center gap-4 text-xs text-gray-500">
                         <span><i class="fas fa-walking"></i> 5 min walk</span>
-                        <span><i class="fas fa-euro-sign"></i> €2/hour</span>
+                        <span class="js-price"><i class="fas fa-euro-sign"></i> €2/hour</span>
                     </div>
                 </div>
                 <button class="gradient-bg text-white px-6 py-2.5 rounded-2xl font-bold text-sm card-shadow">
@@ -88,10 +174,14 @@
                 </button>
             </div>
             <div class="flex items-center gap-4 text-sm mb-4">
-                <span class="px-3 py-1.5 gradient-bg-green text-green-700 rounded-full font-medium">8 Available</span>
-                <span class="text-gray-600"><i class="fas fa-solar-panel text-yellow-500"></i> 85% Solar</span>
+                <span class="px-3 py-1.5 gradient-bg-green text-green-700 rounded-full font-medium js-available">
+                    8 Available
+                </span>
+                <span class="text-gray-600 js-solar">
+                    <i class="fas fa-solar-panel text-yellow-500"></i> 85% Solar
+                </span>
             </div>
-            <div class="text-xs text-gray-500">
+            <div class="text-xs text-gray-500 js-extra">
                 <i class="fas fa-clock"></i> 24/7 Open · <i class="fas fa-star text-yellow-500"></i> 4.8 Rating
             </div>
         </div>
@@ -123,12 +213,558 @@
     </div>
 
     <script>
-        // Detect if in iframe, hide bottom navigation if so
-        if (window.self !== window.top) {
-            const bottomNav = document.getElementById('subBottomNav');
-            if (bottomNav) {
-                bottomNav.style.display = 'none';
+        // ====== 全局变量（Leaflet 版本） ======
+        let map;
+        let stationLayer;          // 站点图层
+        let userLocationMarker;    // 用户定位 marker
+        let searchMarker;          // 搜索结果 marker
+
+        // 默认中心位置：法国南特
+        const defaultLocation = { lat: 47.2184, lng: -1.5536 };
+
+        // 应用初始化函数（在Leaflet加载完成后调用）
+        function initializeApp() {
+            // 检查Leaflet库是否已加载
+            if (typeof L === 'undefined') {
+                console.error('Leaflet library not loaded');
+                const loadingIndicator = document.getElementById('mapLoading');
+                if (loadingIndicator) {
+                    loadingIndicator.innerHTML = `
+                        <div class="text-center text-red-500">
+                            <i class="fas fa-exclamation-triangle text-4xl mb-2"></i>
+                            <div class="text-sm">无法加载地图库</div>
+                            <div class="text-xs mt-2">请检查网络连接并刷新页面</div>
+                        </div>
+                    `;
+                }
+                return;
             }
+
+            // 延迟初始化，确保DOM完全渲染
+            setTimeout(() => {
+                initMap();
+            }, 100);
+            
+            setupSearch();
+            setupButtons();
+            handleIframeBottomNav();
+        }
+
+        // 监听Leaflet加载完成事件
+        window.addEventListener('leafletLoaded', initializeApp);
+
+        // 如果Leaflet已经加载（页面刷新时可能已经加载），直接初始化
+        if (typeof L !== 'undefined' || window.leafletLoaded) {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeApp);
+            } else {
+                initializeApp();
+            }
+        }
+
+        // ====== 初始化 Leaflet 地图 ======
+        function initMap() {
+            try {
+                const loadingIndicator = document.getElementById('mapLoading');
+                const mapContainer = document.getElementById('map');
+                
+                if (!mapContainer) {
+                    throw new Error('Map container not found');
+                }
+
+                // 确保容器有尺寸
+                if (mapContainer.offsetWidth === 0 || mapContainer.offsetHeight === 0) {
+                    console.warn('Map container has no size, retrying...');
+                    setTimeout(() => initMap(), 200);
+                    return;
+                }
+                
+                // 创建 Leaflet 地图
+                map = L.map('map', {
+                    center: [defaultLocation.lat, defaultLocation.lng],
+                    zoom: 13,
+                    zoomControl: false,
+                });
+
+                // OpenStreetMap 瓦片图层
+                const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution:
+                        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                // 确保地图尺寸正确
+                setTimeout(() => {
+                    if (map) {
+                        map.invalidateSize();
+                    }
+                }, 200);
+
+                // 地图加载完成后隐藏加载指示器
+                let mapLoaded = false;
+                tileLayer.on('load', () => {
+                    mapLoaded = true;
+                    if (loadingIndicator) {
+                        loadingIndicator.style.display = 'none';
+                    }
+                });
+
+                // 错误处理
+                tileLayer.on('tileerror', (error) => {
+                    console.error('Tile loading error:', error);
+                });
+
+                // 如果加载超时，也隐藏加载指示器（避免一直显示）
+                setTimeout(() => {
+                    if (loadingIndicator && !mapLoaded) {
+                        // 即使瓦片没加载完，也隐藏加载指示器，让用户看到地图
+                        loadingIndicator.style.display = 'none';
+                    }
+                }, 2000);
+
+                // 自己的站点图层
+                stationLayer = L.layerGroup().addTo(map);
+
+                addSampleStations();
+
+                // 检查是否有导航位置信息（从其他页面传递过来的）
+                checkAndShowNavigateLocation();
+
+                console.log('Leaflet map initialized successfully');
+            } catch (error) {
+                console.error('Error initializing Leaflet map:', error);
+                const loadingIndicator = document.getElementById('mapLoading');
+                if (loadingIndicator) {
+                    loadingIndicator.innerHTML = `
+                        <div class="text-center text-red-500">
+                            <i class="fas fa-exclamation-triangle text-4xl mb-2"></i>
+                            <div class="text-sm">Failed to load map</div>
+                            <div class="text-xs mt-2">${error.message || 'Please check network connection'}</div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // ====== 检查并显示导航位置（从其他页面传递过来的） ======
+        function checkAndShowNavigateLocation() {
+            try {
+                let location = null;
+                
+                // 首先检查sessionStorage（从iframe内传递）
+                const locationData = sessionStorage.getItem('navigateLocation');
+                if (locationData) {
+                    location = JSON.parse(locationData);
+                    // 清除位置信息（避免重复显示）
+                    sessionStorage.removeItem('navigateLocation');
+                } else {
+                    // 检查URL参数（直接访问时）
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const lat = urlParams.get('lat');
+                    const lng = urlParams.get('lng');
+                    const name = urlParams.get('name');
+                    
+                    if (lat && lng) {
+                        location = {
+                            lat: parseFloat(lat),
+                            lng: parseFloat(lng),
+                            name: name ? decodeURIComponent(name) : 'Location',
+                            address: urlParams.get('address') ? decodeURIComponent(urlParams.get('address')) : null
+                        };
+                    }
+                }
+                
+                if (location && location.lat && location.lng) {
+                    // 等待地图完全加载后再显示
+                    setTimeout(() => {
+                        if (map) {
+                            showLocationOnMap(location);
+                        }
+                    }, 500);
+                }
+            } catch (error) {
+                console.error('Error checking navigate location:', error);
+            }
+        }
+
+        // ====== 在地图上显示位置 ======
+        function showLocationOnMap(location) {
+            if (!map || !location.lat || !location.lng) return;
+            
+            // 更新地图视图到目标位置
+            map.setView([location.lat, location.lng], 15);
+            
+            // 清除旧的搜索 marker
+            if (searchMarker) {
+                map.removeLayer(searchMarker);
+            }
+            
+            // 使用默认的蓝色marker图标（Leaflet自带）
+            searchMarker = L.marker([location.lat, location.lng]).addTo(map);
+            
+            // 添加弹出窗口
+            const popupContent = `
+                <div class="p-2">
+                    <h3 class="font-bold text-sm mb-1">${escapeHtml(location.name || 'Location')}</h3>
+                    ${location.address ? `<p class="text-xs text-gray-600">${escapeHtml(location.address)}</p>` : ''}
+                </div>
+            `;
+            searchMarker.bindPopup(popupContent).openPopup();
+            
+            // 更新底部卡片
+            if (location.name) {
+                updateBottomCardFromLocation(location);
+            }
+            
+            console.log('Navigated to location:', location);
+        }
+
+        // ====== 底部卡片更新：导航位置信息 ======
+        function updateBottomCardFromLocation(location) {
+            const bottomCard = document.querySelector('.fixed.bottom-0.bg-white');
+            if (!bottomCard) return;
+
+            const titleElement = bottomCard.querySelector('h3');
+            if (titleElement && location.name) {
+                titleElement.textContent = location.name;
+            }
+
+            const availableElement = bottomCard.querySelector('.js-available');
+            if (availableElement) {
+                availableElement.textContent = 'Navigate';
+            }
+
+            const solarElement = bottomCard.querySelector('.js-solar');
+            if (solarElement && location.address) {
+                solarElement.innerHTML = `<i class="fas fa-map-marker-alt text-green-600"></i> ${escapeHtml(location.address)}`;
+            }
+
+            const priceElement = bottomCard.querySelector('.js-price');
+            if (priceElement) {
+                priceElement.innerHTML = `<i class="fas fa-directions text-green-600"></i> Navigation Target`;
+            }
+
+            const extraElement = bottomCard.querySelector('.js-extra');
+            if (extraElement) {
+                extraElement.innerHTML = `<i class="fas fa-location-dot text-green-600"></i> Tap to view details`;
+            }
+        }
+
+        // ====== 搜索框事件：使用 Nominatim 搜索 ======
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            if (!searchInput) return;
+
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const query = searchInput.value.trim();
+                    if (query) {
+                        searchWithNominatim(query);
+                    }
+                }
+            });
+        }
+
+        // 使用 Nominatim 进行前向地理编码（地址/地名 -> 坐标）
+        async function searchWithNominatim(query) {
+            try {
+                // 注意：公开的 Nominatim API 线上使用要遵守使用条款，建议生产上通过后端代理
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`;
+
+                const res = await fetch(url, {
+                    headers: {
+                        // 不能真正改 User-Agent；生产上建议通过后端请求。
+                        'Accept-Language': 'en'
+                    }
+                });
+
+                if (!res.ok) {
+                    throw new Error('Nominatim request failed: ' + res.status);
+                }
+
+                const results = await res.json();
+                if (!results || results.length === 0) {
+                    alert('No results found for: ' + query);
+                    return;
+                }
+
+                // 这里简单选第一个结果；你也可以做一个下拉列表让用户选
+                const place = results[0];
+                const lat = parseFloat(place.lat);
+                const lon = parseFloat(place.lon);
+
+                // 更新地图视图
+                map.setView([lat, lon], 15);
+
+                // 清除旧的搜索 marker
+                if (searchMarker) {
+                    map.removeLayer(searchMarker);
+                }
+
+                // 新搜索结果 marker
+                searchMarker = L.marker([lat, lon]).addTo(map);
+
+                const displayName = place.display_name || query;
+
+                searchMarker.bindPopup(`
+                    <div class="p-2">
+                        <h3 class="font-bold text-sm mb-1">${escapeHtml(displayName.split(',')[0])}</h3>
+                        <p class="text-xs text-gray-600">${escapeHtml(displayName)}</p>
+                    </div>
+                `).openPopup();
+
+                // 更新底部卡片
+                updateBottomCardFromNominatimPlace(place);
+            } catch (err) {
+                console.error('Nominatim search error:', err);
+                alert('Search failed, please try again later.');
+            }
+        }
+
+        // ====== 添加样例充电站（Leaflet 版）- 南特真实地点 ======
+        function addSampleStations() {
+            const stations = [
+                {
+                    name: 'Gare de Nantes Station',
+                    position: { lat: 47.2173, lng: -1.5424 },
+                    available: 8,
+                    solar: 85,
+                    price: '€2/hour',
+                    rating: 4.8
+                },
+                {
+                    name: 'Château Station',
+                    position: { lat: 47.2159, lng: -1.5509 },
+                    available: 5,
+                    solar: 90,
+                    price: '€2.5/hour',
+                    rating: 4.9
+                },
+                {
+                    name: 'Machines de l\'île Station',
+                    position: { lat: 47.2065, lng: -1.5595 },
+                    available: 3,
+                    solar: 75,
+                    price: '€1.8/hour',
+                    rating: 4.6
+                }
+            ];
+
+            stationLayer.clearLayers();
+
+            stations.forEach(station => {
+                const color =
+                    station.available > 5 ? '#10B981' :
+                    station.available > 2 ? '#F59E0B' :
+                    '#EF4444';
+
+                // 用 circleMarker 模拟颜色效果
+                const marker = L.circleMarker(
+                    [station.position.lat, station.position.lng],
+                    {
+                        radius: 10,
+                        color: '#FFFFFF',
+                        weight: 2,
+                        fillColor: color,
+                        fillOpacity: 1
+                    }
+                );
+
+                marker.addTo(stationLayer);
+
+                const popupHtml = `
+                    <div class="p-3 min-w-[200px]">
+                        <h3 class="font-bold text-base mb-2 primary-green">${escapeHtml(station.name)}</h3>
+                        <div class="space-y-1 text-sm">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-1 gradient-bg-green text-green-700 rounded-full text-xs font-medium">
+                                    ${station.available} Available
+                                </span>
+                            </div>
+                            <div class="text-gray-600">
+                                <i class="fas fa-solar-panel text-yellow-500"></i> ${station.solar}% Solar
+                            </div>
+                            <div class="text-gray-600">
+                                <i class="fas fa-euro-sign"></i> ${station.price}
+                            </div>
+                            <div class="text-gray-600">
+                                <i class="fas fa-star text-yellow-500"></i> ${station.rating} Rating
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                marker.bindPopup(popupHtml);
+
+                marker.on('click', () => {
+                    showStationInfoLeaflet(station);
+                });
+            });
+        }
+
+        // ====== 点击站点时更新底部卡片（Leaflet 版） ======
+        function showStationInfoLeaflet(station) {
+            updateBottomCardFromStation(station);
+        }
+
+        // ====== 底部卡片更新：Station 信息 ======
+        function updateBottomCardFromStation(station) {
+            const bottomCard = document.querySelector('.fixed.bottom-0.bg-white');
+            if (!bottomCard) return;
+
+            const titleElement = bottomCard.querySelector('h3');
+            if (titleElement) {
+                titleElement.textContent = station.name;
+            }
+
+            const availableElement = bottomCard.querySelector('.js-available');
+            if (availableElement) {
+                availableElement.textContent = `${station.available} Available`;
+            }
+
+            const solarElement = bottomCard.querySelector('.js-solar');
+            if (solarElement) {
+                solarElement.innerHTML =
+                    `<i class="fas fa-solar-panel text-yellow-500"></i> ${station.solar}% Solar`;
+            }
+
+            const priceElement = bottomCard.querySelector('.js-price');
+            if (priceElement) {
+                priceElement.innerHTML = `<i class="fas fa-euro-sign"></i> ${station.price}`;
+            }
+
+            const extraElement = bottomCard.querySelector('.js-extra');
+            if (extraElement) {
+                extraElement.innerHTML =
+                    `<i class="fas fa-clock"></i> 24/7 Open · <i class="fas fa-star text-yellow-500"></i> ${station.rating} Rating`;
+            }
+        }
+
+        // ====== 底部卡片更新：Nominatim 搜索结果 ======
+        function updateBottomCardFromNominatimPlace(place) {
+            const bottomCard = document.querySelector('.fixed.bottom-0.bg-white');
+            if (!bottomCard) return;
+
+            const displayName = place.display_name || 'Location';
+            const shortName = displayName.split(',')[0];
+
+            const titleElement = bottomCard.querySelector('h3');
+            if (titleElement) {
+                titleElement.textContent = shortName;
+            }
+
+            const availableElement = bottomCard.querySelector('.js-available');
+            if (availableElement) {
+                availableElement.textContent = 'N/A';
+            }
+
+            const solarElement = bottomCard.querySelector('.js-solar');
+            if (solarElement) {
+                solarElement.innerHTML =
+                    `<i class="fas fa-solar-panel text-yellow-500"></i> Solar info not available`;
+            }
+
+            const priceElement = bottomCard.querySelector('.js-price');
+            if (priceElement) {
+                priceElement.innerHTML =
+                    `<i class="fas fa-euro-sign"></i> Pricing not available`;
+            }
+
+            const extraElement = bottomCard.querySelector('.js-extra');
+            if (extraElement) {
+                extraElement.innerHTML =
+                    `<i class="fas fa-map-marker-alt"></i> ${escapeHtml(displayName)}`;
+            }
+        }
+
+        // ====== 定位 / 筛选按钮事件绑定 ======
+        function setupButtons() {
+            const locateBtn = document.getElementById('locateBtn');
+            if (locateBtn) {
+                locateBtn.addEventListener('click', locateUser);
+            }
+
+            const filterBtn = document.getElementById('filterBtn');
+            if (filterBtn) {
+                filterBtn.addEventListener('click', showFilterOptions);
+            }
+        }
+
+        // ====== 浏览器定位（Leaflet 配合 HTML5 Geolocation） ======
+        function locateUser() {
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser.');
+                return;
+            }
+
+            const locateBtn = document.getElementById('locateBtn');
+            if (locateBtn) {
+                locateBtn.innerHTML = '<i class="fas fa-spinner fa-spin text-green-600"></i>';
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    map.setView([userLocation.lat, userLocation.lng], 15);
+
+                    if (userLocationMarker) {
+                        userLocationMarker.setLatLng([userLocation.lat, userLocation.lng]);
+                    } else {
+                        userLocationMarker = L.circleMarker(
+                            [userLocation.lat, userLocation.lng],
+                            {
+                                radius: 8,
+                                color: '#FFFFFF',
+                                weight: 3,
+                                fillColor: '#34C759',
+                                fillOpacity: 1
+                            }
+                        ).addTo(map);
+                        userLocationMarker.bindPopup('Your Location');
+                    }
+
+                    if (locateBtn) {
+                        locateBtn.innerHTML = '<i class="fas fa-crosshairs text-green-600"></i>';
+                    }
+                },
+                (error) => {
+                    console.error('Error getting location:', error);
+                    alert('Unable to get your location. Please enable location services.');
+                    if (locateBtn) {
+                        locateBtn.innerHTML = '<i class="fas fa-crosshairs text-green-600"></i>';
+                    }
+                }
+            );
+        }
+
+        // ====== 筛选按钮（占位） ======
+        function showFilterOptions() {
+            alert('Filter options coming soon! (Leaflet version)');
+        }
+
+        // ====== iframe 中隐藏底部导航（保持原逻辑） ======
+        function handleIframeBottomNav() {
+            if (window.self !== window.top) {
+                const bottomNav = document.getElementById('subBottomNav');
+                if (bottomNav) {
+                    bottomNav.style.display = 'none';
+                }
+            }
+        }
+
+        // ====== 简单的 HTML 转义（避免 XSS） ======
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
     </script>
 </body>
