@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>充电中 - SolarRide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="custom.css">
+</head>
+<body class="bg-gradient-to-b from-green-50 to-emerald-50">
+    <!-- 顶部导航 -->
+    <div class="bg-white safe-area-top">
+        <div class="flex items-center justify-between px-4 py-3">
+            <button class="w-10 h-10 flex items-center justify-center">
+                <i class="fas fa-arrow-left text-gray-700"></i>
+            </button>
+            <h1 class="font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">充电中</h1>
+            <div class="w-10"></div>
+        </div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="pb-24 custom-scrollbar overflow-y-auto" style="height: calc(100vh - 60px);">
+        <!-- 电量圆环 -->
+        <div class="flex flex-col items-center justify-center py-12 bg-white mx-4 mt-4 rounded-2xl card-shadow">
+            <div class="relative w-48 h-48 mb-6">
+                <svg class="transform -rotate-90 w-full h-full">
+                    <circle cx="96" cy="96" r="88" stroke="#e5e7eb" stroke-width="12" fill="none"></circle>
+                        <circle cx="96" cy="96" r="88" stroke="#34C759" stroke-width="12" fill="none"
+                            stroke-dasharray="553" stroke-dashoffset="166" class="battery-ring"></circle>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <div class="text-5xl font-bold primary-green mb-2" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">70%</div>
+                    <div class="text-sm text-gray-500">当前电量</div>
+                </div>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-gray-800 mb-1">还需 40 分钟</div>
+                <div class="text-sm text-gray-500">预计充满时间</div>
+            </div>
+        </div>
+
+        <!-- 充电信息 -->
+            <div class="mx-4 mt-4 bg-white rounded-3xl p-5 card-shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <div class="text-sm text-gray-500 mb-1">充电站点</div>
+                    <div class="font-bold">朝阳公园充电站</div>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-500 mb-1">桩号</div>
+                    <div class="font-bold">A-08</div>
+                </div>
+            </div>
+            <div class="border-t border-gray-100 pt-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600">本次已用电量</span>
+                    <span class="font-bold text-lg">2.5 kWh</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600">当前费用</span>
+                    <span class="font-bold text-lg primary-green">¥5.0</span>
+                </div>
+                <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <span class="text-gray-600">预计合计费用</span>
+                    <span class="font-bold text-lg">¥8.0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 环保信息 -->
+        <div class="mx-4 mt-4 bg-gradient-to-r from-green-50 to-yellow-50 rounded-2xl p-4 border border-green-200">
+            <div class="flex items-center gap-3 mb-3">
+                <i class="fas fa-leaf text-green-600 text-xl"></i>
+                <div class="flex-1">
+                    <div class="font-bold text-sm mb-1">环保贡献</div>
+                    <div class="text-xs text-gray-600">本次充电环保数据</div>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-700">已减少碳排放</span>
+                    <span class="font-bold primary-green">125 g CO₂</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-700">太阳能供电占比</span>
+                    <span class="font-bold text-yellow-600">85%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 充电详情 -->
+            <div class="mx-4 mt-4 bg-white rounded-3xl p-5 card-shadow-lg">
+            <h3 class="font-bold mb-3">充电详情</h3>
+            <div class="space-y-3 text-sm">
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600">开始时间</span>
+                    <span class="font-medium">14:30</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600">已充电时长</span>
+                    <span class="font-medium">30 分钟</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600">充电功率</span>
+                    <span class="font-medium">5.0 kW</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600">电池温度</span>
+                    <span class="font-medium text-green-600">正常</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部操作栏 -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-area-bottom">
+        <div class="px-4 py-4">
+            <button class="w-full bg-red-500 text-white py-4 rounded-3xl font-bold text-lg card-shadow-lg">
+                <i class="fas fa-stop mr-2"></i>结束充电
+            </button>
+        </div>
+    </div>
+</body>
+</html>

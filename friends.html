@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>骑友 - SolarRide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="custom.css">
+</head>
+<body class="bg-gradient-to-b from-green-50 to-emerald-50">
+    <!-- 顶部导航 -->
+    <div class="bg-white/90 backdrop-blur safe-area-top border-b border-gray-100/50">
+        <div class="flex items-center justify-between px-4 py-3">
+            <div class="flex items-center gap-2">
+                <span class="text-lg font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">SolarRide</span>
+            </div>
+            <button class="w-10 h-10 flex items-center justify-center">
+                <i class="fas fa-plus primary-green"></i>
+            </button>
+        </div>
+        <div class="flex items-center gap-4 px-4 pb-3">
+            <button class="px-4 py-2 primary-green font-bold border-b-2 border-green-600">推荐活动</button>
+            <button class="px-4 py-2 text-gray-500">我的活动</button>
+        </div>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="pb-20 custom-scrollbar overflow-y-auto" style="height: calc(100vh - 120px);">
+        <!-- 活动卡片列表 -->
+        <div class="px-4 mt-4 space-y-4">
+            <div class="bg-white rounded-3xl overflow-hidden card-shadow-lg">
+                <div class="h-40 image-placeholder">
+                    <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800" alt="约骑活动" class="w-full h-full object-cover">
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-3 py-1.5 gradient-bg-green text-green-700 rounded-full text-xs font-medium">约骑</span>
+                        <span class="px-3 py-1.5 gradient-bg-yellow text-yellow-700 rounded-full text-xs font-medium">低碳通勤</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">周末河边慢骑</h3>
+                    <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                        <span><i class="far fa-calendar"></i> 本周六 9:00</span>
+                        <span><i class="fas fa-route"></i> 15 公里</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="flex -space-x-2">
+                                <div class="w-8 h-8 bg-green-200 rounded-full border-2 border-white"></div>
+                                <div class="w-8 h-8 bg-blue-200 rounded-full border-2 border-white"></div>
+                                <div class="w-8 h-8 bg-yellow-200 rounded-full border-2 border-white"></div>
+                            </div>
+                            <span class="text-sm text-gray-600">8/15 人已报名</span>
+                        </div>
+                        <button class="gradient-bg text-white px-5 py-2.5 rounded-2xl text-sm font-bold card-shadow">
+                            我要参加
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl overflow-hidden card-shadow">
+                <div class="h-40 image-placeholder">
+                    <img src="https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800" alt="拼充电" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">拼充电</span>
+                        <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">拼咖啡</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">三里屯站充电 + 咖啡时光</h3>
+                    <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                        <span><i class="far fa-calendar"></i> 今天 14:00</span>
+                        <span><i class="fas fa-map-marker-alt"></i> 三里屯站</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="flex -space-x-2">
+                                <div class="w-8 h-8 bg-pink-200 rounded-full border-2 border-white"></div>
+                                <div class="w-8 h-8 bg-purple-200 rounded-full border-2 border-white"></div>
+                            </div>
+                            <span class="text-sm text-gray-600">2/5 人已报名</span>
+                        </div>
+                        <button class="gradient-bg text-white px-4 py-2 rounded-xl text-sm font-bold">
+                            我要参加
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl overflow-hidden card-shadow">
+                <div class="h-40 image-placeholder">
+                    <img src="https://images.unsplash.com/photo-1501339847302-ac426a4c7c6f?w=800" alt="城市夜骑" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">约骑</span>
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">城市夜骑</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">城市夜骑探索</h3>
+                    <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                        <span><i class="far fa-calendar"></i> 本周五 19:00</span>
+                        <span><i class="fas fa-route"></i> 20 公里</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="flex -space-x-2">
+                                <div class="w-8 h-8 bg-red-200 rounded-full border-2 border-white"></div>
+                                <div class="w-8 h-8 bg-orange-200 rounded-full border-2 border-white"></div>
+                                <div class="w-8 h-8 bg-green-200 rounded-full border-2 border-white"></div>
+                                <div class="w-8 h-8 bg-blue-200 rounded-full border-2 border-white"></div>
+                            </div>
+                            <span class="text-sm text-gray-600">12/20 人已报名</span>
+                        </div>
+                        <button class="gradient-bg text-white px-4 py-2 rounded-xl text-sm font-bold">
+                            我要参加
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="fixed bottom-0 left-0 right-0 bottom-nav safe-area-bottom">
+        <div class="flex items-center justify-around py-2">
+            <div class="flex flex-col items-center py-2">
+                <i class="fas fa-home text-gray-400 text-xl mb-1"></i>
+                <span class="text-xs text-gray-400">首页</span>
+            </div>
+            <div class="flex flex-col items-center py-2">
+                <i class="fas fa-map text-gray-400 text-xl mb-1"></i>
+                <span class="text-xs text-gray-400">地图</span>
+            </div>
+            <div class="nav-center-btn">
+                <i class="fas fa-qrcode text-white text-xl"></i>
+            </div>
+            <div class="flex flex-col items-center py-2">
+                <i class="fas fa-users primary-green text-xl mb-1"></i>
+                <span class="text-xs primary-green font-medium">骑友</span>
+            </div>
+            <div class="flex flex-col items-center py-2">
+                <i class="fas fa-user text-gray-400 text-xl mb-1"></i>
+                <span class="text-xs text-gray-400">我的</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
