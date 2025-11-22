@@ -137,7 +137,7 @@
 
         <!-- 一键找空位 -->
         <div class="mx-4 mt-6 relative z-10">
-            <button class="w-full gradient-bg text-white py-4 rounded-3xl font-bold text-lg card-shadow-lg">
+            <button class="w-full gradient-bg text-white py-4 rounded-3xl font-bold text-lg card-shadow-lg" onclick="navigateToMap()">
                 <i class="fas fa-search-location mr-2"></i>Find Nearest Available Station
             </button>
         </div>
@@ -260,6 +260,20 @@
             } else {
                 // 如果不是在iframe中，直接跳转
                 window.location.href = 'subscription.html';
+            }
+        }
+
+        // 导航到地图页面
+        function navigateToMap() {
+            if (window.parent && window.parent !== window) {
+                // 在iframe中，通过postMessage通知父页面
+                window.parent.postMessage({
+                    type: 'navigate',
+                    page: 'map'
+                }, '*');
+            } else {
+                // 如果不是在iframe中，直接跳转
+                window.location.href = 'map.html';
             }
         }
 
