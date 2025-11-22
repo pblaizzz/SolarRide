@@ -1,60 +1,487 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SolarRide - 原型展示</title>
+    <title>SolarRide - Solar Bike Charging</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="custom.css">
+    <style>
+        /* 主框架样式 - iPhone 16 Pro 模拟 */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+        }
+
+        /* iPhone 16 Pro 框架 */
+        .iphone-16-pro-frame {
+            width: 393px;
+            height: 852px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            border-radius: 55px;
+            padding: 6px;
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                0 30px 80px rgba(0, 0, 0, 0.5),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            position: relative;
+            margin: 20px auto;
+        }
+
+        /* 钛金属边框效果 */
+        .iphone-16-pro-frame::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 57px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0.1) 25%,
+                rgba(0, 0, 0, 0.3) 50%,
+                rgba(255, 255, 255, 0.1) 75%,
+                rgba(255, 255, 255, 0.3) 100%);
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        /* 动态岛（Dynamic Island） */
+        .iphone-16-pro-frame::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 126px;
+            height: 37px;
+            background: #000;
+            border-radius: 19px;
+            z-index: 100;
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.5),
+                0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 屏幕区域 */
+        .iphone-screen {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 49px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+        }
+
+        /* 动态岛内容区域（在屏幕内） */
+        .dynamic-island {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 126px;
+            height: 37px;
+            background: #000;
+            border-radius: 19px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.5),
+                0 2px 8px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        /* 动态岛内部指示器 - 前置摄像头 */
+        .dynamic-island::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 4px rgba(255, 255, 255, 0.3),
+                inset 0 0 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 动态岛内部指示器 - 传感器 */
+        .dynamic-island::after {
+            content: '';
+            position: absolute;
+            right: 8px;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+
+        /* iframe 容器 */
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .main-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+
+        .main-iframe.loading {
+            opacity: 0.5;
+        }
+
+        /* 底部导航栏 */
+        .main-bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 88px;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 1001;
+            padding-bottom: 34px;
+            border-top: 0.5px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* Home Indicator */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+            z-index: 1002;
+        }
+
+        /* 响应式设计 - 小屏幕适配 */
+        @media (max-width: 480px) {
+            body {
+                background: #000;
+            }
+
+            .iphone-16-pro-frame {
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+            }
+
+            .iphone-screen {
+                border-radius: 0;
+            }
+
+            .iphone-16-pro-frame::before {
+                display: none;
+            }
+
+            .iphone-16-pro-frame::after {
+                display: none;
+            }
+
+            .dynamic-island {
+                top: 8px;
+            }
+        }
+
+        /* 确保 iframe 内容可以滚动 */
+        .main-iframe {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* 添加微妙的边框高光效果 */
+        .iphone-16-pro-frame {
+            position: relative;
+        }
+
+        /* 侧边按钮模拟（可选） */
+        .iphone-16-pro-frame .side-button {
+            position: absolute;
+            left: -3px;
+            top: 120px;
+            width: 3px;
+            height: 50px;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.3), transparent);
+            border-radius: 2px 0 0 2px;
+        }
+
+        .iphone-16-pro-frame .side-button.right {
+            left: auto;
+            right: -3px;
+            top: 180px;
+            background: linear-gradient(to left, rgba(0, 0, 0, 0.3), transparent);
+            border-radius: 0 2px 2px 0;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .nav-item.active {
+            color: #34C759;
+        }
+
+        .nav-item:not(.active) {
+            color: #9ca3af;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-item.active i {
+            transform: scale(1.1);
+        }
+
+        .nav-item span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .nav-center-btn {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #34C759 0%, #30D158 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(52, 199, 89, 0.4), 0 2px 8px rgba(52, 199, 89, 0.2);
+            transform: translateY(-8px);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-center-btn:active {
+            transform: translateY(-8px) scale(0.95);
+        }
+
+        .nav-center-btn i {
+            color: white;
+            font-size: 20px;
+        }
+
+        /* 隐藏子页面的底部导航 */
+        .main-iframe + * {
+            pointer-events: none;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 p-4">
-    <div class="max-w-7xl mx-auto">
-        <h1 class="text-3xl font-bold text-center mb-6 text-green-600">SolarRide 原型界面展示</h1>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- iPhone 15 框架 -->
-            <div class="phone-frame">
-                <div class="phone-screen">
-                    <iframe src="home.html" class="w-full h-full border-0"></iframe>
-                </div>
-                <p class="text-center mt-2 text-sm text-gray-600">首页</p>
+<body>
+    <!-- iPhone 16 Pro 框架 -->
+    <div class="iphone-16-pro-frame">
+        <div class="iphone-screen">
+            <!-- 动态岛 -->
+            <div class="dynamic-island"></div>
+            
+            <!-- iframe 容器 -->
+            <div class="iframe-container">
+                <iframe 
+                    id="mainFrame" 
+                    class="main-iframe" 
+                    src="home.html" 
+                    frameborder="0"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <!-- 主框架底部导航栏 -->
+            <div class="main-bottom-nav">
+        <div class="flex items-center justify-around h-full">
+            <!-- Home -->
+            <div class="nav-item active" data-page="home.html" data-nav="home">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
             </div>
             
-            <div class="phone-frame">
-                <div class="phone-screen">
-                    <iframe src="map.html" class="w-full h-full border-0"></iframe>
-                </div>
-                <p class="text-center mt-2 text-sm text-gray-600">地图</p>
+            <!-- Map -->
+            <div class="nav-item" data-page="map.html" data-nav="map">
+                <i class="fas fa-map"></i>
+                <span>Map</span>
             </div>
             
-            <div class="phone-frame">
-                <div class="phone-screen">
-                    <iframe src="station-detail.html" class="w-full h-full border-0"></iframe>
-                </div>
-                <p class="text-center mt-2 text-sm text-gray-600">站点详情</p>
+            <!-- Scan (Center Button) -->
+            <div class="nav-center-btn" id="scanBtn">
+                <i class="fas fa-qrcode"></i>
             </div>
             
-            <div class="phone-frame">
-                <div class="phone-screen">
-                    <iframe src="friends.html" class="w-full h-full border-0"></iframe>
-                </div>
-                <p class="text-center mt-2 text-sm text-gray-600">骑友</p>
+            <!-- Riders -->
+            <div class="nav-item" data-page="friends.html" data-nav="friends">
+                <i class="fas fa-users"></i>
+                <span>Riders</span>
             </div>
             
-            <div class="phone-frame">
-                <div class="phone-screen">
-                    <iframe src="me.html" class="w-full h-full border-0"></iframe>
-                </div>
-                <p class="text-center mt-2 text-sm text-gray-600">我的</p>
+            <!-- Me -->
+            <div class="nav-item" data-page="me.html" data-nav="me">
+                <i class="fas fa-user"></i>
+                <span>Me</span>
             </div>
             
-            <div class="phone-frame">
-                <div class="phone-screen">
-                    <iframe src="charging.html" class="w-full h-full border-0"></iframe>
-                </div>
-                <p class="text-center mt-2 text-sm text-gray-600">充电中</p>
-            </div>
+            <!-- Home Indicator -->
+            <div class="home-indicator"></div>
         </div>
     </div>
+
+    <script>
+        // 页面路由配置
+        const pageRoutes = {
+            'home': 'home.html',
+            'map': 'map.html',
+            'friends': 'friends.html',
+            'me': 'me.html',
+            'charging': 'charging.html',
+            'station-detail': 'station-detail.html',
+            'subscription': 'subscription.html'
+        };
+
+        // 获取 DOM 元素
+        const mainFrame = document.getElementById('mainFrame');
+        const navItems = document.querySelectorAll('.nav-item');
+        const scanBtn = document.getElementById('scanBtn');
+
+        // 当前活动页面
+        let currentPage = 'home';
+
+        /**
+         * 切换页面
+         * @param {string} pageName - 页面名称
+         * @param {boolean} updateNav - 是否更新导航状态
+         */
+        function switchPage(pageName, updateNav = true) {
+            if (!pageRoutes[pageName]) {
+                console.warn(`页面 ${pageName} 不存在`);
+                return;
+            }
+
+            const pageUrl = pageRoutes[pageName];
+            
+            // 如果已经是当前页面，不执行切换
+            if (currentPage === pageName && mainFrame.src.includes(pageUrl)) {
+                return;
+            }
+
+            // 添加加载状态
+            mainFrame.classList.add('loading');
+
+            // 切换 iframe 源
+            mainFrame.src = pageUrl;
+            currentPage = pageName;
+
+            // 更新导航状态
+            if (updateNav) {
+                updateNavigation(pageName);
+            }
+
+            // 移除加载状态（iframe 加载完成后）
+            mainFrame.onload = function() {
+                mainFrame.classList.remove('loading');
+                // 隐藏子页面的底部导航栏
+                try {
+                    const iframeDoc = mainFrame.contentDocument || mainFrame.contentWindow.document;
+                    const subNavs = iframeDoc.querySelectorAll('.bottom-nav');
+                    subNavs.forEach(nav => {
+                        nav.style.display = 'none';
+                    });
+                } catch (e) {
+                    // Cross-origin restrictions, cannot access iframe content
+                    console.log('Cannot access iframe content (possibly due to cross-origin restrictions)');
+                }
+            };
+        }
+
+        /**
+         * 更新导航栏状态
+         * @param {string} activePage - 当前活动页面
+         */
+        function updateNavigation(activePage) {
+            navItems.forEach(item => {
+                const navType = item.getAttribute('data-nav');
+                if (navType === activePage) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // 绑定导航项点击事件
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const pageName = this.getAttribute('data-nav');
+                switchPage(pageName, true);
+            });
+        });
+
+        // Scan button click event
+        scanBtn.addEventListener('click', function() {
+            // QR code scanning functionality can be added here
+            alert('QR Code scanning feature coming soon...');
+        });
+
+        // 监听 iframe 内的页面跳转（通过 postMessage）
+        window.addEventListener('message', function(event) {
+            // 验证消息来源（可选，提高安全性）
+            // if (event.origin !== window.location.origin) return;
+
+            if (event.data && event.data.type === 'navigate') {
+                const targetPage = event.data.page;
+                switchPage(targetPage, event.data.updateNav !== false);
+            }
+        });
+
+        // 初始化：页面加载完成后处理
+        mainFrame.onload = function() {
+            mainFrame.classList.remove('loading');
+            // 尝试隐藏子页面的底部导航（如果同源）
+            try {
+                const iframeDoc = mainFrame.contentDocument || mainFrame.contentWindow.document;
+                const subNavs = iframeDoc.querySelectorAll('.bottom-nav, #subBottomNav');
+                subNavs.forEach(nav => {
+                    nav.style.display = 'none';
+                });
+            } catch (e) {
+                // Cross-origin restrictions, cannot access iframe content
+                // Sub-pages will hide navigation through their own scripts
+            }
+        };
+
+        // Handle iframe loading errors
+        mainFrame.onerror = function() {
+            mainFrame.classList.remove('loading');
+            console.error('Page loading failed');
+        };
+    </script>
 </body>
 </html>

@@ -1,27 +1,30 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>首页 - SolarRide</title>
+    <title>Home - SolarRide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="custom.css">
 </head>
 <body class="bg-gradient-to-b from-green-50 to-emerald-50 decorative-bg">
     <!-- 顶部导航 -->
-    <div class="bg-white/90 backdrop-blur safe-area-top border-b border-gray-100/50">
-        <div class="flex items-center justify-between px-4 py-3">
+    <div class="bg-white/95 backdrop-blur-md safe-area-top border-b border-gray-100/50 shadow-sm">
+        <div class="flex items-center justify-between px-4 py-3.5">
             <div class="flex items-center gap-2">
                 <span class="text-lg font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">SolarRide</span>
             </div>
-            <div class="flex items-center gap-4">
-                <div class="text-xs text-gray-600">
-                    <i class="fas fa-sun text-yellow-500"></i> 晴 25°C
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 rounded-full">
+                    <i class="fas fa-sun text-yellow-500 text-xs"></i>
+                    <span class="text-xs font-medium text-gray-700">Ensoleillé 25°C</span>
                 </div>
                 <div class="relative">
-                    <i class="fas fa-bell text-gray-600"></i>
-                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-bell text-gray-600 text-base"></i>
+                    </button>
+                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
                 </div>
             </div>
         </div>
@@ -30,16 +33,56 @@
     <!-- 内容区 -->
     <div class="pb-20 custom-scrollbar overflow-y-auto" style="height: calc(100vh - 60px);">
         <!-- 当前充电状态卡片 -->
-        <div class="mx-4 mt-4 p-5 gradient-bg rounded-3xl text-white card-shadow-lg relative z-10" style="box-shadow: 0 8px 24px rgba(52, 199, 89, 0.25);">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-sm opacity-90">正在充电中</span>
-                <i class="fas fa-bolt text-yellow-300"></i>
-            </div>
-            <div class="text-2xl font-bold mb-1" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">朝阳公园充电站</div>
-            <div class="flex items-center justify-between">
-                <span class="text-sm opacity-90">剩余 40 分钟</span>
-                <div class="w-24 h-1.5 bg-white/30 rounded-full overflow-hidden">
-                    <div class="w-3/4 h-full bg-white rounded-full"></div>
+        <div class="mx-4 mt-4 p-6 gradient-bg rounded-3xl text-white card-shadow-lg relative z-10 overflow-hidden" style="box-shadow: 0 8px 24px rgba(52, 199, 89, 0.25);">
+            <!-- 背景装饰 -->
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -ml-12 -mb-12"></div>
+            
+            <!-- 内容 -->
+            <div class="relative z-10">
+                <!-- 顶部状态栏 -->
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-yellow-300 rounded-full charging-indicator"></div>
+                        <span class="text-sm font-medium opacity-95">Charging</span>
+                    </div>
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-bolt text-yellow-300 text-lg"></i>
+                    </div>
+                </div>
+                
+                <!-- 站点名称 -->
+                <div class="mb-4">
+                    <h2 class="text-2xl font-bold mb-2 leading-tight" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
+                        Champs-Élysées Station
+                    </h2>
+                </div>
+                
+                <!-- 进度信息 -->
+                <div class="space-y-4">
+                    <!-- 剩余时间和电量 -->
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-xs opacity-80 mb-0.5">Time Remaining</div>
+                            <div class="text-xl font-bold">40 min</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs opacity-80 mb-0.5">Battery Level</div>
+                            <div class="text-xl font-bold">70%</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 进度条 -->
+                    <div class="relative">
+                        <div class="w-full h-3 bg-white/25 rounded-full overflow-hidden backdrop-blur-sm">
+                            <div class="h-full bg-white rounded-full transition-all duration-500 progress-bar-glow" style="width: 70%;"></div>
+                        </div>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-xs opacity-70">0%</span>
+                            <span class="text-xs font-semibold opacity-90">70%</span>
+                            <span class="text-xs opacity-70">100%</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -47,45 +90,45 @@
         <!-- 最近常用充电站 -->
         <div class="mt-6 relative z-10">
             <div class="flex items-center justify-between px-4 mb-3">
-                <h2 class="text-lg font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">最近充电站</h2>
-                <span class="text-sm primary-green">查看全部 <i class="fas fa-chevron-right text-xs"></i></span>
+                <h2 class="text-lg font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Nearby Stations</h2>
+                <span class="text-sm primary-green">View All <i class="fas fa-chevron-right text-xs"></i></span>
             </div>
             <div class="flex gap-4 px-4 overflow-x-auto pb-2">
                 <div class="flex-shrink-0 w-72 bg-white rounded-3xl overflow-hidden card-shadow-lg">
                     <div class="h-36 image-placeholder">
-                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400" alt="充电站" class="w-full h-full object-cover">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400" alt="Charging Station" class="w-full h-full object-cover">
                     </div>
                     <div class="p-5">
                         <div class="flex items-center justify-between mb-2">
-                            <h3 class="font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">朝阳公园站</h3>
-                            <span class="text-xs px-3 py-1.5 gradient-bg-green text-green-700 rounded-full font-medium">空余 8 位</span>
+                            <h3 class="font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Champs-Élysées Station</h3>
+                            <span class="text-xs px-3 py-1.5 gradient-bg-green text-green-700 rounded-full font-medium">8 Available</span>
                         </div>
                         <div class="flex items-center gap-4 text-xs text-gray-500 mb-2">
-                            <span><i class="fas fa-walking"></i> 步行 5 分钟</span>
-                            <span><i class="fas fa-yen-sign"></i> ¥2/小时</span>
+                            <span><i class="fas fa-walking"></i> 5 min walk</span>
+                            <span><i class="fas fa-euro-sign"></i> €2/hour</span>
                         </div>
                         <div class="flex items-center gap-2 text-xs">
                             <i class="fas fa-solar-panel text-yellow-500"></i>
-                            <span class="text-gray-600">太阳能占比 85%</span>
+                            <span class="text-gray-600">85% Solar</span>
                         </div>
                     </div>
                 </div>
                 <div class="flex-shrink-0 w-72 bg-white rounded-3xl overflow-hidden card-shadow-lg">
                     <div class="h-36 image-placeholder">
-                        <img src="https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=400" alt="充电站" class="w-full h-full object-cover">
+                        <img src="https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=400" alt="Charging Station" class="w-full h-full object-cover">
                     </div>
                     <div class="p-5">
                         <div class="flex items-center justify-between mb-2">
-                            <h3 class="font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">三里屯站</h3>
-                            <span class="text-xs px-3 py-1.5 gradient-bg-yellow text-yellow-700 rounded-full font-medium">紧张 2 位</span>
+                            <h3 class="font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Eiffel Tower Station</h3>
+                            <span class="text-xs px-3 py-1.5 gradient-bg-yellow text-yellow-700 rounded-full font-medium">2 Available</span>
                         </div>
                         <div class="flex items-center gap-4 text-xs text-gray-500 mb-2">
-                            <span><i class="fas fa-walking"></i> 步行 12 分钟</span>
-                            <span><i class="fas fa-yen-sign"></i> ¥2.5/小时</span>
+                            <span><i class="fas fa-walking"></i> 12 min walk</span>
+                            <span><i class="fas fa-euro-sign"></i> €2.5/hour</span>
                         </div>
                         <div class="flex items-center gap-2 text-xs">
                             <i class="fas fa-solar-panel text-yellow-500"></i>
-                            <span class="text-gray-600">太阳能占比 72%</span>
+                            <span class="text-gray-600">72% Solar</span>
                         </div>
                     </div>
                 </div>
@@ -95,15 +138,15 @@
         <!-- 一键找空位 -->
         <div class="mx-4 mt-6 relative z-10">
             <button class="w-full gradient-bg text-white py-4 rounded-3xl font-bold text-lg card-shadow-lg">
-                <i class="fas fa-search-location mr-2"></i>一键前往最近空闲充电站
+                <i class="fas fa-search-location mr-2"></i>Find Nearest Available Station
             </button>
         </div>
 
         <!-- 我的车辆电量 -->
         <div class="mx-4 mt-6 bg-white rounded-3xl p-6 card-shadow-lg relative z-10">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">我的车辆</h2>
-                <span class="text-xs text-gray-500">小牛 N1S</span>
+                <h2 class="text-lg font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">My Vehicle</h2>
+                <span class="text-xs text-gray-500">E-Bike N1S</span>
             </div>
             <div class="flex items-center gap-6">
                 <div class="relative w-32 h-32">
@@ -115,17 +158,17 @@
                     <div class="absolute inset-0 flex items-center justify-center">
                         <div class="text-center">
                             <div class="text-3xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">70%</div>
-                            <div class="text-xs text-gray-500">电量</div>
+                            <div class="text-xs text-gray-500">Battery</div>
                         </div>
                     </div>
                 </div>
                 <div class="flex-1">
                     <div class="mb-2">
-                        <div class="text-sm text-gray-500 mb-1">预计可骑里程</div>
-                        <div class="text-xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">42 公里</div>
+                        <div class="text-sm text-gray-500 mb-1">Estimated Range</div>
+                        <div class="text-xl font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">42 km</div>
                     </div>
                     <div class="text-sm text-gray-500">
-                        <i class="fas fa-clock"></i> 充满需 1.5 小时
+                        <i class="fas fa-clock"></i> 1.5h to full charge
                     </div>
                 </div>
             </div>
@@ -134,17 +177,17 @@
         <!-- 环保数据卡片 -->
         <div class="mx-4 mt-6 bg-white rounded-3xl p-6 card-shadow-lg relative z-10">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">环保成就</h2>
-                <span class="text-xs primary-green">本月</span>
+                <h2 class="text-lg font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Eco Impact</h2>
+                <span class="text-xs primary-green">This Month</span>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div class="text-center p-5 gradient-bg-green rounded-2xl">
                     <div class="text-2xl font-bold text-green-700 mb-1">12.5</div>
-                    <div class="text-xs text-gray-600">减少碳排放 (kg)</div>
+                    <div class="text-xs text-gray-600">CO₂ Reduced (kg)</div>
                 </div>
                 <div class="text-center p-5 gradient-bg-yellow rounded-2xl">
                     <div class="text-2xl font-bold text-yellow-700 mb-1">85%</div>
-                    <div class="text-xs text-gray-600">太阳能占比</div>
+                    <div class="text-xs text-gray-600">Solar Powered</div>
                 </div>
             </div>
         </div>
@@ -154,26 +197,26 @@
             <div class="gradient-bg-purple rounded-3xl p-5 mb-4 card-shadow-lg">
                 <div class="flex items-center justify-between">
                     <div>
-                        <div class="text-purple-900 font-bold mb-1">开通绿能会员</div>
-                        <div class="text-purple-700 text-sm">充电更省钱，享专属优惠</div>
+                        <div class="text-purple-900 font-bold mb-1">Join Green Energy Member</div>
+                        <div class="text-purple-700 text-sm">Save more, enjoy exclusive offers</div>
                     </div>
                     <button class="bg-white text-purple-700 px-5 py-2.5 rounded-2xl font-bold text-sm card-shadow">
-                        立即开通
+                        Join Now
                     </button>
                 </div>
             </div>
             
             <div class="bg-white rounded-3xl overflow-hidden card-shadow-lg">
                 <div class="h-36 image-placeholder">
-                    <img src="https://images.unsplash.com/photo-1501339847302-ac426a4c7c6f?w=400" alt="合作商家" class="w-full h-full object-cover">
+                    <img src="https://images.unsplash.com/photo-1501339847302-ac426a4c7c6f?w=400" alt="Partner Merchant" class="w-full h-full object-cover">
                 </div>
                 <div class="p-5">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h3 class="font-bold primary-green mb-1" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">星巴克 (三里屯店)</h3>
-                            <div class="text-xs text-gray-500">会员专享 8.5 折</div>
+                            <h3 class="font-bold primary-green mb-1" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Starbucks (Champs-Élysées)</h3>
+                            <div class="text-xs text-gray-500">Member 15% Off</div>
                         </div>
-                        <span class="text-xs px-3 py-1.5 gradient-bg-pink text-pink-700 rounded-full font-medium">优惠</span>
+                        <span class="text-xs px-3 py-1.5 gradient-bg-pink text-pink-700 rounded-full font-medium">Deal</span>
                     </div>
                 </div>
             </div>
@@ -181,28 +224,38 @@
     </div>
 
     <!-- 底部导航 -->
-    <div class="fixed bottom-0 left-0 right-0 bottom-nav safe-area-bottom">
+    <div class="fixed bottom-0 left-0 right-0 bottom-nav safe-area-bottom" id="subBottomNav">
             <div class="flex items-center justify-around py-2">
             <div class="flex flex-col items-center py-2">
                 <i class="fas fa-home primary-green text-xl mb-1"></i>
-                <span class="text-xs primary-green font-medium">首页</span>
+                <span class="text-xs primary-green font-medium">Home</span>
             </div>
             <div class="flex flex-col items-center py-2">
                 <i class="fas fa-map text-gray-400 text-xl mb-1"></i>
-                <span class="text-xs text-gray-400">地图</span>
+                <span class="text-xs text-gray-400">Map</span>
             </div>
             <div class="nav-center-btn">
                 <i class="fas fa-qrcode text-white text-xl"></i>
             </div>
             <div class="flex flex-col items-center py-2">
                 <i class="fas fa-users text-gray-400 text-xl mb-1"></i>
-                <span class="text-xs text-gray-400">骑友</span>
+                <span class="text-xs text-gray-400">Riders</span>
             </div>
             <div class="flex flex-col items-center py-2">
                 <i class="fas fa-user text-gray-400 text-xl mb-1"></i>
-                <span class="text-xs text-gray-400">我的</span>
+                <span class="text-xs text-gray-400">Me</span>
             </div>
         </div>
     </div>
+
+    <script>
+        // Detect if in iframe, hide bottom navigation if so
+        if (window.self !== window.top) {
+            const bottomNav = document.getElementById('subBottomNav');
+            if (bottomNav) {
+                bottomNav.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>

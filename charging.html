@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>充电中 - SolarRide</title>
+    <title>Charging - SolarRide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="custom.css">
@@ -15,7 +15,7 @@
             <button class="w-10 h-10 flex items-center justify-center">
                 <i class="fas fa-arrow-left text-gray-700"></i>
             </button>
-            <h1 class="font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">充电中</h1>
+            <h1 class="font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">Charging</h1>
             <div class="w-10"></div>
         </div>
     </div>
@@ -32,12 +32,12 @@
                 </svg>
                 <div class="absolute inset-0 flex flex-col items-center justify-center">
                     <div class="text-5xl font-bold primary-green mb-2" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">70%</div>
-                    <div class="text-sm text-gray-500">当前电量</div>
+                    <div class="text-sm text-gray-500">Current Battery</div>
                 </div>
             </div>
             <div class="text-center">
-                <div class="text-2xl font-bold text-gray-800 mb-1">还需 40 分钟</div>
-                <div class="text-sm text-gray-500">预计充满时间</div>
+                <div class="text-2xl font-bold text-gray-800 mb-1">40 min remaining</div>
+                <div class="text-sm text-gray-500">Estimated full charge time</div>
             </div>
         </div>
 
@@ -45,26 +45,26 @@
             <div class="mx-4 mt-4 bg-white rounded-3xl p-5 card-shadow-lg">
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <div class="text-sm text-gray-500 mb-1">充电站点</div>
-                    <div class="font-bold">朝阳公园充电站</div>
+                    <div class="text-sm text-gray-500 mb-1">Charging Station</div>
+                    <div class="font-bold">Champs-Élysées Station</div>
                 </div>
                 <div class="text-right">
-                    <div class="text-sm text-gray-500 mb-1">桩号</div>
+                    <div class="text-sm text-gray-500 mb-1">Port</div>
                     <div class="font-bold">A-08</div>
                 </div>
             </div>
             <div class="border-t border-gray-100 pt-4 space-y-3">
                 <div class="flex items-center justify-between">
-                    <span class="text-gray-600">本次已用电量</span>
+                    <span class="text-gray-600">Energy Used</span>
                     <span class="font-bold text-lg">2.5 kWh</span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span class="text-gray-600">当前费用</span>
-                    <span class="font-bold text-lg primary-green">¥5.0</span>
+                    <span class="text-gray-600">Current Cost</span>
+                    <span class="font-bold text-lg primary-green">€5.0</span>
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-gray-100">
-                    <span class="text-gray-600">预计合计费用</span>
-                    <span class="font-bold text-lg">¥8.0</span>
+                    <span class="text-gray-600">Estimated Total</span>
+                    <span class="font-bold text-lg">€8.0</span>
                 </div>
             </div>
         </div>
@@ -74,17 +74,17 @@
             <div class="flex items-center gap-3 mb-3">
                 <i class="fas fa-leaf text-green-600 text-xl"></i>
                 <div class="flex-1">
-                    <div class="font-bold text-sm mb-1">环保贡献</div>
-                    <div class="text-xs text-gray-600">本次充电环保数据</div>
+                    <div class="font-bold text-sm mb-1">Eco Impact</div>
+                    <div class="text-xs text-gray-600">This charging session data</div>
                 </div>
             </div>
             <div class="space-y-2">
                 <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-700">已减少碳排放</span>
+                    <span class="text-sm text-gray-700">CO₂ Reduced</span>
                     <span class="font-bold primary-green">125 g CO₂</span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-700">太阳能供电占比</span>
+                    <span class="text-sm text-gray-700">Solar Powered</span>
                     <span class="font-bold text-yellow-600">85%</span>
                 </div>
             </div>
@@ -92,23 +92,23 @@
 
         <!-- 充电详情 -->
             <div class="mx-4 mt-4 bg-white rounded-3xl p-5 card-shadow-lg">
-            <h3 class="font-bold mb-3">充电详情</h3>
+            <h3 class="font-bold mb-3">Charging Details</h3>
             <div class="space-y-3 text-sm">
                 <div class="flex items-center justify-between">
-                    <span class="text-gray-600">开始时间</span>
-                    <span class="font-medium">14:30</span>
+                    <span class="text-gray-600">Start Time</span>
+                    <span class="font-medium">2:30 PM</span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span class="text-gray-600">已充电时长</span>
-                    <span class="font-medium">30 分钟</span>
+                    <span class="text-gray-600">Duration</span>
+                    <span class="font-medium">30 min</span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span class="text-gray-600">充电功率</span>
+                    <span class="text-gray-600">Power</span>
                     <span class="font-medium">5.0 kW</span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span class="text-gray-600">电池温度</span>
-                    <span class="font-medium text-green-600">正常</span>
+                    <span class="text-gray-600">Battery Temp</span>
+                    <span class="font-medium text-green-600">Normal</span>
                 </div>
             </div>
         </div>
@@ -118,7 +118,7 @@
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-area-bottom">
         <div class="px-4 py-4">
             <button class="w-full bg-red-500 text-white py-4 rounded-3xl font-bold text-lg card-shadow-lg">
-                <i class="fas fa-stop mr-2"></i>结束充电
+                <i class="fas fa-stop mr-2"></i>Stop Charging
             </button>
         </div>
     </div>
