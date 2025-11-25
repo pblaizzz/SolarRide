@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="custom.css">
 </head>
 <body class="app-shell">
-    <div class="phone-frame">
-        <div class="phone-screen bg-gradient-to-b from-green-50 to-emerald-50 decorative-bg">
-            <div class="flex flex-col h-full relative z-10">
+    <div class="phone-frame" id="phoneFrame">
+        <div class="phone-screen bg-gradient-to-b from-green-50 to-emerald-50 decorative-bg" id="phoneScreen">
+            <div class="flex flex-col h-full relative z-10" id="contentWrapper">
                 <!-- 顶部导航 -->
-                <div class="bg-white/95 backdrop-blur-md safe-area-top border-b border-gray-100/50 shadow-sm rounded-t-[46px]">
+                <div class="bg-white/95 backdrop-blur-md safe-area-top border-b border-gray-100/50 shadow-sm" id="topNav">
                     <div class="flex items-center justify-between px-4 py-3.5">
                         <div class="flex items-center gap-2">
                             <span class="text-lg font-bold primary-green" style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">SolarRide</span>
@@ -255,6 +255,23 @@
     </div>
 
     <script>
+        // 检测是否在 iframe 中，如果在 iframe 中则调整样式
+        (function() {
+            const isInIframe = window.self !== window.top;
+            
+            if (isInIframe) {
+                // 在 iframe 中：添加 in-iframe 类，CSS 会处理样式
+                document.body.classList.add('in-iframe');
+                const topNav = document.getElementById('topNav');
+                if (topNav) {
+                    topNav.classList.remove('rounded-t-[46px]');
+                }
+            } else {
+                // 不在 iframe 中：保持手机框架
+                document.body.classList.add('standalone');
+            }
+        })();
+
         // 导航到订阅页面
         function navigateToSubscription() {
             if (window.parent && window.parent !== window) {

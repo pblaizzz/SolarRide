@@ -22,6 +22,44 @@ body {
     }
 }
 
+/* iframe 模式：移除框架样式 */
+body.in-iframe {
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    height: 100vh;
+    overflow: hidden;
+}
+
+body.in-iframe .app-shell {
+    padding: 0;
+    background: transparent;
+    height: 100%;
+    width: 100%;
+    align-items: stretch;
+}
+
+body.in-iframe .phone-frame {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+body.in-iframe .phone-screen {
+    border-radius: 0 !important;
+    border: none !important;
+    height: 100% !important;
+}
+
+body.in-iframe .phone-frame::before,
+body.in-iframe .phone-frame::after {
+    display: none;
+}
+
 /* iPhone 16 Pro 模拟框架样式（保留兼容性） */
 .phone-frame {
     width: 393px;
