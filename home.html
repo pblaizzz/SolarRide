@@ -4,6 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Home - SolarRide</title>
+    <script>
+        // 在 Tailwind 加载前就拦截警告
+        (function() {
+            const originalWarn = console.warn;
+            const originalError = console.error;
+            
+            // 过滤 Tailwind CSS 生产环境警告
+            console.warn = function(...args) {
+                const message = args.join(' ');
+                if (message.includes('cdn.tailwindcss.com should not be used in production') ||
+                    message.includes('tailwindcss.com/docs/installation')) {
+                    return;
+                }
+                originalWarn.apply(console, args);
+            };
+            
+            // 过滤 Google Analytics 和其他无关错误
+            console.error = function(...args) {
+                const message = args.join(' ');
+                if (message.includes('google-analytics') ||
+                    message.includes('ERR_CONNECTION_CLOSED') ||
+                    message.includes('chunk-common') ||
+                    message.includes('temushuju.com') ||
+                    message.includes('unionContentScript')) {
+                    return;
+                }
+                originalError.apply(console, args);
+            };
+        })();
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="custom.css">
@@ -255,25 +285,60 @@
     </div>
 
     <script>
-        // 确保 DOM 加载完成后再执行
+        // 默认设置为 standalone 模式，防止闪烁
+        (function() {
+            // 立即设置默认状态，避免闪烁
+            document.body.classList.add('standalone');
+            if (!document.body.classList.contains('app-shell')) {
+                document.body.classList.add('app-shell');
+            }
+        })();
+        
+        // 确保 DOM 加载完成后再执行检测
         function initFrameDetection() {
-            // 检测是否在 iframe 中，如果在 iframe 中则调整样式
-            const isInIframe = window.self !== window.top;
-            
-            console.log('Frame detection:', { isInIframe, readyState: document.readyState });
+            // 更可靠的 iframe 检测
+            let isInIframe = false;
+            try {
+                // 方法1: 检查 window.self 和 window.top
+                isInIframe = window.self !== window.top;
+                
+                // 方法2: 检查 parent 是否不同（某些浏览器需要）
+                if (!isInIframe) {
+                    try {
+                        isInIframe = window.parent !== window.self;
+                    } catch (e) {
+                        // 跨域时会抛出异常，说明在 iframe 中
+                        isInIframe = true;
+                    }
+                }
+                
+                // 方法3: 检查 frameElement（最可靠的方法）
+                if (!isInIframe) {
+                    try {
+                        isInIframe = window.frameElement !== null;
+                    } catch (e) {
+                        // 某些情况下无法访问
+                    }
+                }
+            } catch (e) {
+                // 如果检测出错，默认不在 iframe 中
+                isInIframe = false;
+            }
             
             if (isInIframe) {
-                // 在 iframe 中：添加 in-iframe 类，CSS 会处理样式
+                // 在 iframe 中：移除 standalone，添加 in-iframe
+                document.body.classList.remove('standalone');
                 document.body.classList.add('in-iframe');
+                
                 const topNav = document.getElementById('topNav');
                 if (topNav) {
                     topNav.classList.remove('rounded-t-[46px]');
                 }
-                console.log('In iframe mode - frame removed');
             } else {
-                // 不在 iframe 中：保持手机框架
+                // 不在 iframe 中：确保 standalone 模式
+                document.body.classList.remove('in-iframe');
                 document.body.classList.add('standalone');
-                // 确保 app-shell 类存在
+                
                 if (!document.body.classList.contains('app-shell')) {
                     document.body.classList.add('app-shell');
                 }
@@ -284,27 +349,29 @@
                     phoneFrame.style.display = 'block';
                     phoneFrame.style.visibility = 'visible';
                     phoneFrame.style.opacity = '1';
-                    console.log('Standalone mode - frame should be visible', phoneFrame);
-                } else {
-                    console.error('phoneFrame element not found!');
                 }
             }
         }
         
-        // 多种方式确保执行
+        // 在 DOM 完全加载后执行检测
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initFrameDetection);
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(initFrameDetection, 0);
+            });
         } else {
-            // DOM 已经加载完成，立即执行
-            initFrameDetection();
+            // DOM 已经加载完成，延迟执行确保渲染完成
+            setTimeout(initFrameDetection, 0);
         }
         
-        // 备用：window.onload
+        // 备用：window.onload（确保所有资源加载完成）
         window.addEventListener('load', function() {
-            if (!document.body.classList.contains('standalone') && !document.body.classList.contains('in-iframe')) {
-                console.log('Fallback: re-running frame detection');
-                initFrameDetection();
-            }
+            setTimeout(function() {
+                if (!document.body.classList.contains('in-iframe')) {
+                    // 如果还没有设置为 iframe 模式，确保是 standalone
+                    document.body.classList.add('standalone');
+                    document.body.classList.remove('in-iframe');
+                }
+            }, 100);
         });
 
         // 导航到订阅页面

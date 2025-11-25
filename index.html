@@ -4,6 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>SolarRide - Solar Bike Charging</title>
+    <script>
+        // 在脚本加载前就拦截警告和错误
+        (function() {
+            const originalWarn = console.warn;
+            const originalError = console.error;
+            
+            // 过滤 Tailwind CSS 生产环境警告
+            console.warn = function(...args) {
+                const message = args.join(' ');
+                if (message.includes('cdn.tailwindcss.com should not be used in production') ||
+                    message.includes('tailwindcss.com/docs/installation')) {
+                    return;
+                }
+                originalWarn.apply(console, args);
+            };
+            
+            // 过滤 Google Analytics、浏览器扩展等无关错误
+            console.error = function(...args) {
+                const message = args.join(' ');
+                if (message.includes('google-analytics') ||
+                    message.includes('ERR_CONNECTION_CLOSED') ||
+                    message.includes('chunk-common') ||
+                    message.includes('temushuju.com') ||
+                    message.includes('unionContentScript') ||
+                    message.includes('AxiosError') && message.includes('Network Error')) {
+                    return;
+                }
+                originalError.apply(console, args);
+            };
+        })();
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="custom.css">
@@ -435,17 +466,38 @@
         const originalFetch = window.fetch;
         window.fetch = function(...args) {
             const url = args[0];
-            if (typeof url === 'string' && url.includes('google-analytics')) {
+            if (typeof url === 'string' && (url.includes('google-analytics') || url.includes('google-analytics.com'))) {
                 // 静默处理 Google Analytics 请求失败
                 return Promise.resolve(new Response('', { status: 200, statusText: 'OK' }));
             }
             return originalFetch.apply(this, args).catch(function(error) {
                 if (error.message && error.message.includes('ERR_CONNECTION_CLOSED') && 
-                    args[0] && typeof args[0] === 'string' && args[0].includes('google-analytics')) {
+                    args[0] && typeof args[0] === 'string' && (args[0].includes('google-analytics') || args[0].includes('google-analytics.com'))) {
                     return Promise.resolve(new Response('', { status: 200 }));
                 }
                 throw error;
             });
+        };
+        
+        // 方法4: 拦截 XMLHttpRequest（有些脚本可能使用 XHR 而不是 fetch）
+        const originalXHROpen = XMLHttpRequest.prototype.open;
+        const originalXHRSend = XMLHttpRequest.prototype.send;
+        
+        XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+            if (typeof url === 'string' && (url.includes('google-analytics') || url.includes('google-analytics.com'))) {
+                this._isAnalyticsRequest = true;
+            }
+            return originalXHROpen.apply(this, [method, url, ...rest]);
+        };
+        
+        XMLHttpRequest.prototype.send = function(...args) {
+            if (this._isAnalyticsRequest) {
+                // 静默处理 Google Analytics 请求
+                this.onload = function() {};
+                this.onerror = function() {};
+                return;
+            }
+            return originalXHRSend.apply(this, args);
         };
         
         // 页面路由配置

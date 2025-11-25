@@ -57,14 +57,16 @@ body.in-iframe .phone-frame::after {
     display: none;
 }
 
-/* Standalone 模式：确保手机框架正确显示 */
-body.standalone {
+/* Standalone 模式：确保手机框架正确显示（默认状态） */
+body.standalone,
+body:not(.in-iframe) {
     min-height: 100vh;
     display: block;
     overflow-x: hidden;
 }
 
-body.standalone .app-shell {
+body.standalone .app-shell,
+body:not(.in-iframe) .app-shell {
     min-height: 100vh;
     display: flex !important;
     align-items: center;
@@ -73,7 +75,8 @@ body.standalone .app-shell {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-body.standalone .phone-frame {
+body.standalone .phone-frame,
+body:not(.in-iframe) .phone-frame {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -81,6 +84,13 @@ body.standalone .phone-frame {
     height: 852px !important;
     margin: 0 auto !important;
     position: relative !important;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%) !important;
+    border-radius: 55px !important;
+    padding: 6px !important;
+    box-shadow: 
+        0 0 0 1px rgba(255, 255, 255, 0.12),
+        0 30px 80px rgba(0, 0, 0, 0.55),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
 }
 
 /* iPhone 16 Pro 模拟框架样式（保留兼容性） */
@@ -96,6 +106,9 @@ body.standalone .phone-frame {
         0 30px 80px rgba(0, 0, 0, 0.55),
         inset 0 0 0 1px rgba(255, 255, 255, 0.05);
     position: relative;
+    display: block;
+    visibility: visible;
+    opacity: 1;
 }
 
 .phone-frame::before {
