@@ -57,6 +57,32 @@ body.in-iframe .phone-frame::after {
     display: none;
 }
 
+/* Standalone 模式：确保手机框架正确显示 */
+body.standalone {
+    min-height: 100vh;
+    display: block;
+    overflow-x: hidden;
+}
+
+body.standalone .app-shell {
+    min-height: 100vh;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+body.standalone .phone-frame {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 393px !important;
+    height: 852px !important;
+    margin: 0 auto !important;
+    position: relative !important;
+}
+
 /* iPhone 16 Pro 模拟框架样式（保留兼容性） */
 .phone-frame {
     width: 393px;

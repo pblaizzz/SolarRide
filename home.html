@@ -255,9 +255,12 @@
     </div>
 
     <script>
-        // 检测是否在 iframe 中，如果在 iframe 中则调整样式
-        (function() {
+        // 确保 DOM 加载完成后再执行
+        function initFrameDetection() {
+            // 检测是否在 iframe 中，如果在 iframe 中则调整样式
             const isInIframe = window.self !== window.top;
+            
+            console.log('Frame detection:', { isInIframe, readyState: document.readyState });
             
             if (isInIframe) {
                 // 在 iframe 中：添加 in-iframe 类，CSS 会处理样式
@@ -266,11 +269,43 @@
                 if (topNav) {
                     topNav.classList.remove('rounded-t-[46px]');
                 }
+                console.log('In iframe mode - frame removed');
             } else {
                 // 不在 iframe 中：保持手机框架
                 document.body.classList.add('standalone');
+                // 确保 app-shell 类存在
+                if (!document.body.classList.contains('app-shell')) {
+                    document.body.classList.add('app-shell');
+                }
+                
+                // 强制显示 phone-frame
+                const phoneFrame = document.getElementById('phoneFrame');
+                if (phoneFrame) {
+                    phoneFrame.style.display = 'block';
+                    phoneFrame.style.visibility = 'visible';
+                    phoneFrame.style.opacity = '1';
+                    console.log('Standalone mode - frame should be visible', phoneFrame);
+                } else {
+                    console.error('phoneFrame element not found!');
+                }
             }
-        })();
+        }
+        
+        // 多种方式确保执行
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initFrameDetection);
+        } else {
+            // DOM 已经加载完成，立即执行
+            initFrameDetection();
+        }
+        
+        // 备用：window.onload
+        window.addEventListener('load', function() {
+            if (!document.body.classList.contains('standalone') && !document.body.classList.contains('in-iframe')) {
+                console.log('Fallback: re-running frame detection');
+                initFrameDetection();
+            }
+        });
 
         // 导航到订阅页面
         function navigateToSubscription() {
