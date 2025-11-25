@@ -1,3 +1,27 @@
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    background: #010409;
+}
+
+.app-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(52, 199, 89, 0.15), transparent 55%),
+        radial-gradient(circle at 80% 0%, rgba(147, 197, 114, 0.2), transparent 60%),
+        #020617;
+}
+
+@media (max-width: 520px) {
+    .app-shell {
+        padding: 16px;
+    }
+}
+
 /* iPhone 16 Pro 模拟框架样式（保留兼容性） */
 .phone-frame {
     width: 393px;
@@ -7,8 +31,8 @@
     border-radius: 55px;
     padding: 6px;
     box-shadow: 
-        0 0 0 1px rgba(255, 255, 255, 0.1),
-        0 30px 80px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.12),
+        0 30px 80px rgba(0, 0, 0, 0.55),
         inset 0 0 0 1px rgba(255, 255, 255, 0.05);
     position: relative;
 }
@@ -50,6 +74,15 @@
     overflow: hidden;
     position: relative;
     border: 1px solid rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 430px) {
+    .phone-frame {
+        transform: scale(0.92);
+        transform-origin: top center;
+    }
 }
 
 /* 安全区域适配 */
