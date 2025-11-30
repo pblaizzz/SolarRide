@@ -349,9 +349,61 @@
                     phoneFrame.style.display = 'block';
                     phoneFrame.style.visibility = 'visible';
                     phoneFrame.style.opacity = '1';
+                    
+                    // 动态计算缩放比例，确保框架始终在视口内完整显示
+                    adjustPhoneFrameScale(phoneFrame);
                 }
             }
         }
+        
+        // 动态调整手机框架的缩放比例
+        function adjustPhoneFrameScale(phoneFrame) {
+            if (!phoneFrame) return;
+            
+            // 框架的原始尺寸
+            const frameWidth = 393;
+            const frameHeight = 852;
+            
+            // 获取视口尺寸和 padding
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const appShell = document.querySelector('.app-shell');
+            const padding = appShell ? 
+                parseInt(window.getComputedStyle(appShell).padding) * 2 : 64;
+            
+            // 计算可用空间
+            const availableWidth = viewportWidth - padding;
+            const availableHeight = viewportHeight - padding;
+            
+            // 计算宽度和高度的缩放比例
+            const scaleX = availableWidth / frameWidth;
+            const scaleY = availableHeight / frameHeight;
+            
+            // 取较小的缩放比例，确保框架完全在视口内
+            let scale = Math.min(scaleX, scaleY, 1); // 最大不超过 1（不放大）
+            
+            // 确保最小缩放比例（避免框架太小）
+            const minScale = 0.5;
+            scale = Math.max(scale, minScale);
+            
+            // 应用缩放
+            phoneFrame.style.transform = `scale(${scale})`;
+            phoneFrame.style.transformOrigin = 'center center';
+        }
+        
+        // 窗口大小改变时重新调整缩放
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                if (!document.body.classList.contains('in-iframe')) {
+                    const phoneFrame = document.getElementById('phoneFrame');
+                    if (phoneFrame) {
+                        adjustPhoneFrameScale(phoneFrame);
+                    }
+                }
+            }, 100);
+        });
         
         // 在 DOM 完全加载后执行检测
         if (document.readyState === 'loading') {
@@ -370,6 +422,12 @@
                     // 如果还没有设置为 iframe 模式，确保是 standalone
                     document.body.classList.add('standalone');
                     document.body.classList.remove('in-iframe');
+                    
+                    // 确保缩放正确应用
+                    const phoneFrame = document.getElementById('phoneFrame');
+                    if (phoneFrame && typeof adjustPhoneFrameScale === 'function') {
+                        adjustPhoneFrameScale(phoneFrame);
+                    }
                 }
             }, 100);
         });

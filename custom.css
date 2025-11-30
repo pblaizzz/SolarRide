@@ -91,6 +91,9 @@ body:not(.in-iframe) .phone-frame {
         0 0 0 1px rgba(255, 255, 255, 0.12),
         0 30px 80px rgba(0, 0, 0, 0.55),
         inset 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+    /* 自动缩放以适应视口 - 由 JavaScript 动态计算 */
+    transform-origin: center center;
+    transition: transform 0.3s ease;
 }
 
 /* iPhone 16 Pro 模拟框架样式（保留兼容性） */
