@@ -558,16 +558,34 @@
                     station.available > 2 ? '#F59E0B' :
                     '#EF4444';
 
-                // 用 circleMarker 模拟颜色效果
-                const marker = L.circleMarker(
+                // 创建充电图标（使用充电站图标）
+                const chargingIcon = L.divIcon({
+                    className: 'charging-station-icon',
+                    html: `
+                        <div style="
+                            background: ${color};
+                            width: 44px;
+                            height: 44px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border: 3px solid #FFFFFF;
+                            box-shadow: 0 3px 10px rgba(0,0,0,0.35);
+                            transition: transform 0.2s;
+                        ">
+                            <i class="fas fa-plug" style="color: #FFFFFF; font-size: 20px;"></i>
+                        </div>
+                    `,
+                    iconSize: [44, 44],
+                    iconAnchor: [22, 22],
+                    popupAnchor: [0, -22]
+                });
+
+                // 使用自定义充电图标创建标记
+                const marker = L.marker(
                     [station.position.lat, station.position.lng],
-                    {
-                        radius: 10,
-                        color: '#FFFFFF',
-                        weight: 2,
-                        fillColor: color,
-                        fillOpacity: 1
-                    }
+                    { icon: chargingIcon }
                 );
 
                 marker.addTo(stationLayer);
